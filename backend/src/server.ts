@@ -4,13 +4,18 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { logger } from './utils/logger.js';
 import { register, httpRequestCounter, httpRequestDuration } from './utils/metrics.js';
+import { apiRouter } from './routes/apiRoutes.js';
+import { rssController } from './controllers/rssController.js';
+import { schedulerService } from './services/schedulerService.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: false
+}));
 app.use(cors({
   origin: process.env.CORS_ORIGIN || '*',
   credentials: true
@@ -54,10 +59,26 @@ app.get('/metrics', async (_req: Request, res: Response) => {
   }
 });
 
-export { app };
+// Root RSS endpoint para compatibilidade direta (RF-05)
+app.get('/rss', (req: Request, res: Response) => rssController.getRss(req, res));
 
+// Rotas da API REST (/api/*)
+app.use('/api', apiRouter);
+
+// Handler de fallback para 404
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `A rota ${req.method} ${req.originalUrl} não foi encontrada.`
+  });
+});
+
+// Inicialização do Servidor e Scheduler
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     logger.info(`🚀 Backend Flood Status Recife rodando na porta ${PORT}`);
+    schedulerService.start();
   });
 }
+
+export { app };
