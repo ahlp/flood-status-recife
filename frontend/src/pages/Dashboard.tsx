@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   loginAdmin,
   fetchLatencyMetrics,
   fetchSuccessFailureMetrics,
   fetchDailyDecisionsMetrics,
-  fetchLogs
-} from '../services/api.js';
+  fetchLogs,
+} from "../services/api.js";
 import {
   LatencyDataPoint,
   SourceSuccessRate,
   DailyDecisionPoint,
-  LogEntry
-} from '../types/index.js';
+  LogEntry,
+} from "../types/index.js";
 import {
   Activity,
   ArrowLeft,
@@ -25,27 +25,31 @@ import {
   RefreshCw,
   Terminal,
   TrendingUp,
-  AlertCircle
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+  AlertCircle,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Dashboard: React.FC = () => {
-  const [token, setToken] = useState<string | null>(() => sessionStorage.getItem('feh_admin_token'));
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('adminrecife');
+  const [token, setToken] = useState<string | null>(() =>
+    sessionStorage.getItem("feh_admin_token"),
+  );
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("adminrecife");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Estados de dados
   const [latencyData, setLatencyData] = useState<LatencyDataPoint[]>([]);
   const [successRates, setSuccessRates] = useState<SourceSuccessRate[]>([]);
-  const [dailyDecisions, setDailyDecisions] = useState<DailyDecisionPoint[]>([]);
+  const [dailyDecisions, setDailyDecisions] = useState<DailyDecisionPoint[]>(
+    [],
+  );
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Filtros de Logs
-  const [logDate, setLogDate] = useState('');
-  const [logLevel, setLogLevel] = useState('');
+  const [logDate, setLogDate] = useState("");
+  const [logLevel, setLogLevel] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +58,9 @@ export const Dashboard: React.FC = () => {
     try {
       const res = await loginAdmin(username, password);
       setToken(res.token);
-      sessionStorage.setItem('feh_admin_token', res.token);
+      sessionStorage.setItem("feh_admin_token", res.token);
     } catch {
-      setLoginError('Credenciais inválidas. Verifique usuário e senha.');
+      setLoginError("Credenciais inválidas. Verifique usuário e senha.");
     } finally {
       setIsLoggingIn(false);
     }
@@ -64,7 +68,7 @@ export const Dashboard: React.FC = () => {
 
   const handleLogout = () => {
     setToken(null);
-    sessionStorage.removeItem('feh_admin_token');
+    sessionStorage.removeItem("feh_admin_token");
   };
 
   const loadDashboardData = useCallback(async () => {
@@ -75,7 +79,7 @@ export const Dashboard: React.FC = () => {
         fetchLatencyMetrics(token),
         fetchSuccessFailureMetrics(token),
         fetchDailyDecisionsMetrics(token),
-        fetchLogs(token, logDate, logLevel)
+        fetchLogs(token, logDate, logLevel),
       ]);
       setLatencyData(lat);
       setSuccessRates(succ);
@@ -90,7 +94,8 @@ export const Dashboard: React.FC = () => {
   }, [token, logDate, logLevel]);
 
   useEffect(() => {
-    document.body.className = 'bg-slate-950 font-sans text-slate-100 min-h-screen';
+    document.body.className =
+      "bg-slate-950 font-sans text-slate-100 min-h-screen";
     if (token) {
       loadDashboardData();
 
@@ -109,8 +114,12 @@ export const Dashboard: React.FC = () => {
             <Lock className="w-6 h-6" />
           </div>
 
-          <h1 className="text-2xl font-black text-center text-white mb-2">Painel de Métricas FEH</h1>
-          <p className="text-xs text-slate-400 text-center mb-6">Autenticação restrita de operadores</p>
+          <h1 className="text-2xl font-black text-center text-white mb-2">
+            Painel de Métricas FEH
+          </h1>
+          <p className="text-xs text-slate-400 text-center mb-6">
+            Autenticação restrita de operadores
+          </p>
 
           {loginError && (
             <div className="mb-4 p-3 rounded-xl bg-red-900/30 border border-red-800 text-red-300 text-xs flex items-center gap-2">
@@ -121,7 +130,9 @@ export const Dashboard: React.FC = () => {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Usuário</label>
+              <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                Usuário
+              </label>
               <input
                 type="text"
                 value={username}
@@ -132,7 +143,9 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Senha</label>
+              <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                Senha
+              </label>
               <input
                 type="password"
                 value={password}
@@ -147,12 +160,15 @@ export const Dashboard: React.FC = () => {
               disabled={isLoggingIn}
               className="w-full py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg transition-colors cursor-pointer mt-2"
             >
-              {isLoggingIn ? 'Autenticando...' : 'Entrar no Dashboard'}
+              {isLoggingIn ? "Autenticando..." : "Entrar no Dashboard"}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <Link to="/" className="text-xs text-slate-400 hover:text-white flex items-center justify-center gap-1">
+            <Link
+              to="/"
+              className="text-xs text-slate-400 hover:text-white flex items-center justify-center gap-1"
+            >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Voltar para tela inicial</span>
             </Link>
@@ -167,7 +183,10 @@ export const Dashboard: React.FC = () => {
       {/* Header do Dashboard */}
       <header className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 transition-colors">
+          <Link
+            to="/"
+            className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 transition-colors"
+          >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -175,7 +194,9 @@ export const Dashboard: React.FC = () => {
               <Activity className="w-6 h-6 text-sky-400" />
               <span>Monitoramento & Métricas Internas</span>
             </h1>
-            <p className="text-xs text-slate-400">Flood Status Recife (Fico em Casa Hoje?)</p>
+            <p className="text-xs text-slate-400">
+              Flood Status Recife (Fico em Casa Hoje?)
+            </p>
           </div>
         </div>
 
@@ -185,7 +206,9 @@ export const Dashboard: React.FC = () => {
             disabled={loading}
             className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-xs font-semibold rounded-xl text-slate-300 border border-slate-800 cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`}
+            />
             <span>Atualizar</span>
           </button>
           <button
@@ -208,41 +231,61 @@ export const Dashboard: React.FC = () => {
                 <Clock className="w-5 h-5 text-sky-400" />
                 <span>Latência das Chamadas Externas (Últimas 24h)</span>
               </h2>
-              <p className="text-xs text-slate-400">Tempo de resposta em milissegundos (ms) por fonte</p>
+              <p className="text-xs text-slate-400">
+                Tempo de resposta em milissegundos (ms) por fonte
+              </p>
             </div>
             <div className="flex gap-3 text-xs">
-              <span className="flex items-center gap-1 text-sky-400">● Open-Meteo</span>
-              <span className="flex items-center gap-1 text-amber-400">● Marinha do Brasil</span>
-              <span className="flex items-center gap-1 text-emerald-400">● CEMADEN</span>
+              <span className="flex items-center gap-1 text-sky-400">
+                ● Open-Meteo
+              </span>
+              <span className="flex items-center gap-1 text-amber-400">
+                ● Marinha do Brasil
+              </span>
+              <span className="flex items-center gap-1 text-emerald-400">
+                ● CEMADEN
+              </span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Card Open-Meteo */}
             <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
-              <div className="text-xs font-semibold text-slate-400 mb-1">Open-Meteo (Previsão Pluvial)</div>
+              <div className="text-xs font-semibold text-slate-400 mb-1">
+                Open-Meteo (Previsão Pluvial)
+              </div>
               <div className="text-2xl font-black text-sky-400">
                 {latencyData[latencyData.length - 1]?.openMeteo || 140} ms
               </div>
-              <div className="text-[10px] text-slate-500 mt-1">Média 24h: ~150ms</div>
+              <div className="text-[10px] text-slate-500 mt-1">
+                Média 24h: ~150ms
+              </div>
             </div>
 
             {/* Card Marinha */}
             <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
-              <div className="text-xs font-semibold text-slate-400 mb-1">Marinha do Brasil (Tábua de Marés)</div>
+              <div className="text-xs font-semibold text-slate-400 mb-1">
+                Marinha do Brasil (Tábua de Marés)
+              </div>
               <div className="text-2xl font-black text-amber-400">
                 {latencyData[latencyData.length - 1]?.marinha || 210} ms
               </div>
-              <div className="text-[10px] text-slate-500 mt-1">Média 24h: ~220ms</div>
+              <div className="text-[10px] text-slate-500 mt-1">
+                Média 24h: ~220ms
+              </div>
             </div>
 
             {/* Card CEMADEN */}
             <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
-              <div className="text-xs font-semibold text-slate-400 mb-1">CEMADEN / APAC (Nível Fluvial)</div>
+              <div className="text-xs font-semibold text-slate-400 mb-1">
+                CEMADEN / APAC (Nível Fluvial)
+              </div>
               <div className="text-2xl font-black text-emerald-400">
                 {latencyData[latencyData.length - 1]?.cemaden || 95} ms
               </div>
-              <div className="text-[10px] text-slate-500 mt-1">Média 24h: ~105ms</div>
+              <div className="text-[10px] text-slate-500 mt-1">
+                Média 24h: ~105ms
+              </div>
             </div>
           </div>
 
@@ -250,25 +293,36 @@ export const Dashboard: React.FC = () => {
           <div className="mt-6 pt-4 border-t border-slate-800 overflow-x-auto">
             <div className="min-w-[600px] flex items-end justify-between gap-1 h-28 pt-4">
               {latencyData.slice(-16).map((pt, idx) => (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-1 h-full justify-end group relative">
+                <div
+                  key={idx}
+                  className="flex-1 flex flex-col items-center gap-1 h-full justify-end group relative"
+                >
                   <div className="w-full flex items-end gap-0.5 justify-center h-full">
                     <div
-                      style={{ height: `${Math.min(100, (pt.openMeteo / 300) * 100)}%` }}
+                      style={{
+                        height: `${Math.min(100, (pt.openMeteo / 300) * 100)}%`,
+                      }}
                       className="w-1.5 bg-sky-400 rounded-t"
                       title={`Open-Meteo: ${pt.openMeteo}ms`}
                     />
                     <div
-                      style={{ height: `${Math.min(100, (pt.marinha / 300) * 100)}%` }}
+                      style={{
+                        height: `${Math.min(100, (pt.marinha / 300) * 100)}%`,
+                      }}
                       className="w-1.5 bg-amber-400 rounded-t"
                       title={`Marinha: ${pt.marinha}ms`}
                     />
                     <div
-                      style={{ height: `${Math.min(100, (pt.cemaden / 300) * 100)}%` }}
+                      style={{
+                        height: `${Math.min(100, (pt.cemaden / 300) * 100)}%`,
+                      }}
                       className="w-1.5 bg-emerald-400 rounded-t"
                       title={`CEMADEN: ${pt.cemaden}ms`}
                     />
                   </div>
-                  <span className="text-[9px] text-slate-500 mt-1">{pt.timeStr}</span>
+                  <span className="text-[9px] text-slate-500 mt-1">
+                    {pt.timeStr}
+                  </span>
                 </div>
               ))}
             </div>
@@ -283,7 +337,9 @@ export const Dashboard: React.FC = () => {
                 <Database className="w-5 h-5 text-emerald-400" />
                 <span>Taxa de Sucesso vs. Falha das Fontes Externas</span>
               </h2>
-              <p className="text-xs text-slate-400">Confiabilidade e resiliência das integrações</p>
+              <p className="text-xs text-slate-400">
+                Confiabilidade e resiliência das integrações
+              </p>
             </div>
             <div className="flex gap-3 text-xs">
               <span className="flex items-center gap-1 text-emerald-400">
@@ -297,20 +353,38 @@ export const Dashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {successRates.map((src) => (
-              <div key={src.service} className="bg-slate-900 p-5 rounded-2xl border border-slate-800">
+              <div
+                key={src.service}
+                className="bg-slate-900 p-5 rounded-2xl border border-slate-800"
+              >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-bold text-white uppercase">{src.service}</span>
-                  <span className="text-sm font-black text-emerald-400">{src.successRate}%</span>
+                  <span className="text-sm font-bold text-white uppercase">
+                    {src.service}
+                  </span>
+                  <span className="text-sm font-black text-emerald-400">
+                    {src.successRate}%
+                  </span>
                 </div>
 
                 {/* Barra de Progresso Bicolor */}
                 <div className="w-full h-3 bg-red-900/60 rounded-full overflow-hidden flex">
-                  <div style={{ width: `${src.successRate}%` }} className="bg-emerald-500 h-full" />
+                  <div
+                    style={{ width: `${src.successRate}%` }}
+                    className="bg-emerald-500 h-full"
+                  />
                 </div>
 
                 <div className="flex justify-between text-[11px] text-slate-400 mt-3">
-                  <span>Sucessos: <strong className="text-emerald-400">{src.successCount}</strong></span>
-                  <span>Falhas: <strong className="text-red-400">{src.failureCount}</strong></span>
+                  <span>
+                    Sucessos:{" "}
+                    <strong className="text-emerald-400">
+                      {src.successCount}
+                    </strong>
+                  </span>
+                  <span>
+                    Falhas:{" "}
+                    <strong className="text-red-400">{src.failureCount}</strong>
+                  </span>
                 </div>
               </div>
             ))}
@@ -323,18 +397,27 @@ export const Dashboard: React.FC = () => {
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-indigo-400" />
-                <span>Volume Diário de Consultas /decision (Últimas 7 Semanas)</span>
+                <span>
+                  Volume Diário de Consultas /decision (Últimas 7 Semanas)
+                </span>
               </h2>
-              <p className="text-xs text-slate-400">Total de requisições de decisão atendidas pelo backend</p>
+              <p className="text-xs text-slate-400">
+                Total de requisições de decisão atendidas pelo backend
+              </p>
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <div className="min-w-[700px] flex items-end justify-between gap-1 h-36 pt-4">
               {dailyDecisions.slice(-21).map((d, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group">
+                <div
+                  key={i}
+                  className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group"
+                >
                   <div
-                    style={{ height: `${Math.min(100, (d.count / 2000) * 100)}%` }}
+                    style={{
+                      height: `${Math.min(100, (d.count / 2000) * 100)}%`,
+                    }}
                     className="w-full bg-indigo-500/80 group-hover:bg-indigo-400 rounded-t transition-all relative"
                   >
                     <div className="opacity-0 group-hover:opacity-100 absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded shadow whitespace-nowrap pointer-events-none transition-opacity">
@@ -356,7 +439,9 @@ export const Dashboard: React.FC = () => {
                 <Terminal className="w-5 h-5 text-sky-400" />
                 <span>Logs Estruturados do Sistema</span>
               </h2>
-              <p className="text-xs text-slate-400">Filtragem de ocorrências por severidade e data</p>
+              <p className="text-xs text-slate-400">
+                Filtragem de ocorrências por severidade e data
+              </p>
             </div>
 
             {/* Controles de Filtro */}
@@ -399,16 +484,16 @@ export const Dashboard: React.FC = () => {
                   logs.map((l, i) => (
                     <tr key={i} className="hover:bg-slate-900/50">
                       <td className="py-2 px-4 text-slate-400 whitespace-nowrap">
-                        {new Date(l.timestamp).toLocaleTimeString('pt-BR')}
+                        {new Date(l.timestamp).toLocaleTimeString("pt-BR")}
                       </td>
                       <td className="py-2 px-4">
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            l.level === 'error'
-                              ? 'bg-red-900/60 text-red-300'
-                              : l.level === 'warn'
-                              ? 'bg-amber-900/60 text-amber-300'
-                              : 'bg-sky-900/60 text-sky-300'
+                            l.level === "error"
+                              ? "bg-red-900/60 text-red-300"
+                              : l.level === "warn"
+                                ? "bg-amber-900/60 text-amber-300"
+                                : "bg-sky-900/60 text-sky-300"
                           }`}
                         >
                           {l.level.toUpperCase()}
@@ -421,7 +506,8 @@ export const Dashboard: React.FC = () => {
                 ) : (
                   <tr>
                     <td colSpan={4} className="py-8 text-center text-slate-500">
-                      Nenhum registro de log encontrado para os filtros selecionados.
+                      Nenhum registro de log encontrado para os filtros
+                      selecionados.
                     </td>
                   </tr>
                 )}

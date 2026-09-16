@@ -37,8 +37,12 @@
 }
 
 /* Transição suave universal para mudança de tema (RF-06 / US-03) */
-body, .theme-transition {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+body,
+.theme-transition {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 /* Suporte à acessibilidade de foco */

@@ -1,19 +1,19 @@
-import { Request, Response } from 'express';
-import { rssService } from '../services/rssService.js';
-import { riskEngineService } from '../services/riskEngine.js';
-import { logger } from '../utils/logger.js';
+import { Request, Response } from "express";
+import { rssService } from "../services/rssService.js";
+import { riskEngineService } from "../services/riskEngine.js";
+import { logger } from "../utils/logger.js";
 
 export class RSSController {
   public async getRss(req: Request, res: Response): Promise<void> {
     try {
       const xml = await rssService.getRssXml();
-      res.set('Content-Type', 'application/rss+xml; charset=utf-8');
+      res.set("Content-Type", "application/rss+xml; charset=utf-8");
       res.send(xml);
     } catch (error) {
       logger.error(`Erro ao gerar feed RSS: ${(error as Error).message}`);
       const fallbackDecision = riskEngineService.getStaticFallbackResult();
       const fallbackXml = rssService.buildRssXml(fallbackDecision);
-      res.set('Content-Type', 'application/rss+xml; charset=utf-8');
+      res.set("Content-Type", "application/rss+xml; charset=utf-8");
       res.send(fallbackXml);
     }
   }
@@ -23,7 +23,9 @@ export class RSSController {
       const item = await rssService.getLatestItemJson();
       res.json(item);
     } catch (error) {
-      logger.error(`Erro ao recuperar último item RSS: ${(error as Error).message}`);
+      logger.error(
+        `Erro ao recuperar último item RSS: ${(error as Error).message}`,
+      );
       const fallbackDecision = riskEngineService.getStaticFallbackResult();
       const fallbackItem = await rssService.getLatestItemJson(fallbackDecision);
       res.json(fallbackItem);
@@ -34,15 +36,15 @@ export class RSSController {
     try {
       const xml = await rssService.getRssXml();
       const fileName = rssService.getDownloadFileName();
-      res.set('Content-Disposition', `attachment; filename="${fileName}"`);
-      res.set('Content-Type', 'application/xml; charset=utf-8');
+      res.set("Content-Disposition", `attachment; filename="${fileName}"`);
+      res.set("Content-Type", "application/xml; charset=utf-8");
       res.send(xml);
     } catch (error) {
       logger.error(`Erro ao baixar feed RSS: ${(error as Error).message}`);
       const fallbackDecision = riskEngineService.getStaticFallbackResult();
       const fallbackXml = rssService.buildRssXml(fallbackDecision);
-      res.set('Content-Disposition', `attachment; filename="rss-fallback.xml"`);
-      res.set('Content-Type', 'application/xml; charset=utf-8');
+      res.set("Content-Disposition", `attachment; filename="rss-fallback.xml"`);
+      res.set("Content-Type", "application/xml; charset=utf-8");
       res.send(fallbackXml);
     }
   }

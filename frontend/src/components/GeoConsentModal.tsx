@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import { MapPin, X } from 'lucide-react';
+import React, { useEffect, useRef } from "react";
+import { MapPin, X } from "lucide-react";
 
 interface GeoConsentModalProps {
   isOpen: boolean;
   onConsent: (agreed: boolean) => void;
 }
 
-const STORAGE_KEY = 'feh_geo_consent';
+const STORAGE_KEY = "feh_geo_consent";
 const EXPIRY_DAYS = 30;
 
 export function checkGeoConsent(): { asked: boolean; consent: boolean } {
@@ -29,7 +29,7 @@ export function saveGeoConsent(consent: boolean): void {
   try {
     const data = {
       consent,
-      expiresAt: Date.now() + EXPIRY_DAYS * 24 * 60 * 60 * 1000
+      expiresAt: Date.now() + EXPIRY_DAYS * 24 * 60 * 60 * 1000,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch {
@@ -37,7 +37,10 @@ export function saveGeoConsent(consent: boolean): void {
   }
 }
 
-export const GeoConsentModal: React.FC<GeoConsentModalProps> = ({ isOpen, onConsent }) => {
+export const GeoConsentModal: React.FC<GeoConsentModalProps> = ({
+  isOpen,
+  onConsent,
+}) => {
   const confirmBtnRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -49,19 +52,19 @@ export const GeoConsentModal: React.FC<GeoConsentModalProps> = ({ isOpen, onCons
 
     // Bloqueia rolagem do body enquanto modal aberto (US-4)
     const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
 
     // Gerenciador da tecla ESC
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         handleChoice(false);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = originalOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
 
@@ -73,13 +76,13 @@ export const GeoConsentModal: React.FC<GeoConsentModalProps> = ({ isOpen, onCons
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="geo-modal-title"
     >
-      <div 
+      <div
         ref={modalRef}
         className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-100 text-slate-800 text-left relative transform transition-all"
       >
@@ -96,15 +99,21 @@ export const GeoConsentModal: React.FC<GeoConsentModalProps> = ({ isOpen, onCons
             <MapPin className="w-5 h-5" />
           </div>
           <div>
-            <h2 id="geo-modal-title" className="text-lg font-bold text-slate-900 leading-tight">
+            <h2
+              id="geo-modal-title"
+              className="text-lg font-bold text-slate-900 leading-tight"
+            >
               Personalizar Alerta
             </h2>
-            <p className="text-xs text-slate-500">Localização aproximada via IP</p>
+            <p className="text-xs text-slate-500">
+              Localização aproximada via IP
+            </p>
           </div>
         </div>
 
         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-          Deseja que exibamos vias críticas próximas com risco de alagamento com base na sua localização aproximada?
+          Deseja que exibamos vias críticas próximas com risco de alagamento com
+          base na sua localização aproximada?
         </p>
 
         <div className="flex gap-3 justify-end">

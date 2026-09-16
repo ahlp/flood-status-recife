@@ -1,17 +1,29 @@
-import React from 'react';
-import { DecisionResult, CriticalRoad } from '../types/index.js';
-import { AlertTriangle, CheckCircle, Waves, CloudRain, MapPin } from 'lucide-react';
+import React from "react";
+import { DecisionResult, CriticalRoad } from "../types/index.js";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Waves,
+  CloudRain,
+  MapPin,
+} from "lucide-react";
 
 interface DecisionDisplayProps {
   decision: DecisionResult;
   userRoad?: CriticalRoad | null;
 }
 
-export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({ decision, userRoad }) => {
-  const isStayHome = decision.value === 'SIM';
+export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({
+  decision,
+  userRoad,
+}) => {
+  const isStayHome = decision.value === "SIM";
 
   return (
-    <div id="decision-container" className="w-full max-w-2xl mx-auto text-center px-4 py-8 select-none">
+    <div
+      id="decision-container"
+      className="w-full max-w-2xl mx-auto text-center px-4 py-8 select-none"
+    >
       {/* Badge de Horário / Fonte */}
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-white/20 backdrop-blur-md text-white mb-6 shadow-sm">
         <span>Recife & Região Metropolitana</span>
@@ -21,9 +33,9 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({ decision, user
 
       {/* Decision Box Centralizado em 48px+ */}
       <div className="my-6">
-        <h1 
+        <h1
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white drop-shadow-md flex items-center justify-center gap-4 animate-fade-in"
-          style={{ minHeight: '1.2em' }}
+          style={{ minHeight: "1.2em" }}
         >
           {isStayHome ? (
             <>
@@ -38,17 +50,17 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({ decision, user
           )}
         </h1>
         <p className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide text-white/90 mt-2">
-          {isStayHome ? 'Fica em casa hoje' : 'Pode sair com segurança'}
+          {isStayHome ? "Fica em casa hoje" : "Pode sair com segurança"}
         </p>
       </div>
 
       {/* Justificativa Contextual Curta (<= 90 caracteres) */}
       <div className="mt-8 mb-6">
-        <p 
+        <p
           className="text-lg sm:text-xl font-medium text-white/95 max-w-xl mx-auto leading-relaxed px-4 py-2 bg-black/10 rounded-xl backdrop-blur-sm shadow-inner"
           title={decision.justification}
         >
-          {decision.justification || 'Justificativa indisponível.'}
+          {decision.justification || "Justificativa indisponível."}
         </p>
       </div>
 
@@ -60,10 +72,10 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({ decision, user
             <span>Pico da Maré</span>
           </div>
           <div className="text-lg font-bold">
-            {decision.factors?.tide?.peakHeight?.toFixed(1) || '2.2'}m
+            {decision.factors?.tide?.peakHeight?.toFixed(1) || "2.2"}m
           </div>
           <div className="text-xs text-white/70">
-            às {decision.factors?.tide?.peakTime || '07:30'}
+            às {decision.factors?.tide?.peakTime || "07:30"}
           </div>
         </div>
 
@@ -73,7 +85,11 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({ decision, user
             <span>Chuva Matinal</span>
           </div>
           <div className="text-lg font-bold">
-            {Math.round((decision.factors?.rainfall?.rainPast6h || 0) + (decision.factors?.rainfall?.rainForecastMorning || 0))}mm
+            {Math.round(
+              (decision.factors?.rainfall?.rainPast6h || 0) +
+                (decision.factors?.rainfall?.rainForecastMorning || 0),
+            )}
+            mm
           </div>
           <div className="text-xs text-white/70">
             Probab. {decision.factors?.rainfall?.rainProbability || 60}%
@@ -85,12 +101,8 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({ decision, user
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>Índice de Risco</span>
           </div>
-          <div className="text-lg font-bold">
-            {decision.riskScore}%
-          </div>
-          <div className="text-xs text-white/70">
-            Corte: 65%
-          </div>
+          <div className="text-lg font-bold">{decision.riskScore}%</div>
+          <div className="text-xs text-white/70">Corte: 65%</div>
         </div>
       </div>
 
@@ -99,7 +111,8 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({ decision, user
         <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-black/20 backdrop-blur-md text-white rounded-lg text-sm border border-white/20 animate-fade-in">
           <MapPin className="w-4 h-4 text-amber-300 flex-shrink-0" />
           <span>
-            Via crítica próxima: <strong>{userRoad.name}</strong> ({userRoad.neighborhood})
+            Via crítica próxima: <strong>{userRoad.name}</strong> (
+            {userRoad.neighborhood})
           </span>
         </div>
       )}

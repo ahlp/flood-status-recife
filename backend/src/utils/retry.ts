@@ -1,4 +1,4 @@
-import { logger } from './logger.js';
+import { logger } from "./logger.js";
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -9,12 +9,12 @@ export interface RetryOptions {
 
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const maxRetries = options.maxRetries ?? 3;
   const initialDelayMs = options.initialDelayMs ?? 500;
   const factor = options.factor ?? 2;
-  const serviceName = options.serviceName ?? 'ExternalService';
+  const serviceName = options.serviceName ?? "ExternalService";
 
   let lastError: unknown;
   let delay = initialDelayMs;
@@ -26,7 +26,7 @@ export async function withRetry<T>(
       lastError = error;
       const errorMsg = error instanceof Error ? error.message : String(error);
       logger.warn(
-        `[${serviceName}] Falha na tentativa ${attempt}/${maxRetries}: ${errorMsg}`
+        `[${serviceName}] Falha na tentativa ${attempt}/${maxRetries}: ${errorMsg}`,
       );
 
       if (attempt < maxRetries) {

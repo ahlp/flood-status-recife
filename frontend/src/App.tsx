@@ -1,8 +1,8 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home } from './pages/Home.js';
-import { RSSView } from './pages/RSSView.js';
-import { Dashboard } from './pages/Dashboard.js';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Home } from "./pages/Home.js";
+import { RSSView } from "./pages/RSSView.js";
+import { Dashboard } from "./pages/Dashboard.js";
 
 export const App: React.FC = () => {
   return (

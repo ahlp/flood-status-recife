@@ -1,6 +1,6 @@
-import React from 'react';
-import { Rss } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Rss } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const RssIcon: React.FC = () => {
   return (

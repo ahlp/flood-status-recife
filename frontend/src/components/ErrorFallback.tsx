@@ -1,5 +1,5 @@
-import React from 'react';
-import { RefreshCw } from 'lucide-react';
+import React from "react";
+import { RefreshCw } from "lucide-react";
 
 interface ErrorFallbackProps {
   onRetry?: () => void;
@@ -15,7 +15,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ onRetry }) => {
   };
 
   return (
-    <main 
+    <main
       className="min-h-screen w-full flex items-center justify-center p-4 bg-[#f5f5f5] text-slate-800"
       role="main"
     >
@@ -24,7 +24,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ onRetry }) => {
           Informação Indisponível
         </h1>
 
-        <p 
+        <p
           className="text-base sm:text-lg text-slate-700 leading-relaxed mb-8"
           aria-live="polite"
         >

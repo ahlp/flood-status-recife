@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { cacheService } from '../services/cacheService.js';
-import { riskEngineService } from '../services/riskEngine.js';
-import { dataFetcherService } from '../services/dataFetcher.js';
-import { logger } from '../utils/logger.js';
-import { recordDecisionRequest } from '../utils/metrics.js';
-import { DecisionResult } from '../types/index.js';
+import { Request, Response } from "express";
+import { cacheService } from "../services/cacheService.js";
+import { riskEngineService } from "../services/riskEngine.js";
+import { dataFetcherService } from "../services/dataFetcher.js";
+import { logger } from "../utils/logger.js";
+import { recordDecisionRequest } from "../utils/metrics.js";
+import { DecisionResult } from "../types/index.js";
 
 export class DecisionController {
   /**
@@ -21,13 +21,17 @@ export class DecisionController {
       // 1. Consulta Cache Redis (ou in-memory)
       const cached = await cacheService.get<DecisionResult>(cacheKey);
       if (cached) {
-        logger.info(`⚡ Decisão diária servida do cache [${cached.value}] - Risco: ${cached.riskScore}%`);
+        logger.info(
+          `⚡ Decisão diária servida do cache [${cached.value}] - Risco: ${cached.riskScore}%`,
+        );
         res.json(cached);
         return;
       }
 
       // 2. Se não estiver em cache, executa inferência em tempo de execução
-      logger.info('🔍 Decisão não encontrada em cache. Executando avaliação...');
+      logger.info(
+        "🔍 Decisão não encontrada em cache. Executando avaliação...",
+      );
       const result = await riskEngineService.evaluateCurrentStatus();
 
       // 3. Salva no cache com TTL de 24h (86400s)
@@ -35,7 +39,9 @@ export class DecisionController {
 
       res.json(result);
     } catch (error) {
-      logger.error(`❌ Falha ao processar decisão: ${(error as Error).message}`);
+      logger.error(
+        `❌ Falha ao processar decisão: ${(error as Error).message}`,
+      );
       // Fallback estático seguro (RF-04 / US-07)
       const fallback = riskEngineService.getStaticFallbackResult();
       res.json(fallback);
@@ -48,7 +54,10 @@ export class DecisionController {
    */
   public async getLocationInfo(req: Request, res: Response): Promise<void> {
     try {
-      const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0] || req.socket.remoteAddress || '127.0.0.1';
+      const clientIp =
+        (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
+        req.socket.remoteAddress ||
+        "127.0.0.1";
       const roads = dataFetcherService.getCriticalRoads();
 
       // Simulação ou busca de via crítica mais próxima
@@ -56,20 +65,20 @@ export class DecisionController {
 
       res.json({
         ip: clientIp,
-        city: 'Recife',
-        state: 'PE',
-        region: 'Pernambuco',
-        country: 'Brasil',
+        city: "Recife",
+        state: "PE",
+        region: "Pernambuco",
+        country: "Brasil",
         nearestCriticalRoad: defaultRoad,
-        criticalRoads: roads
+        criticalRoads: roads,
       });
     } catch (error) {
       logger.warn(`Erro na geolocalização: ${(error as Error).message}`);
       res.json({
-        city: 'Recife',
-        state: 'PE',
+        city: "Recife",
+        state: "PE",
         nearestCriticalRoad: dataFetcherService.getCriticalRoads()[0],
-        criticalRoads: dataFetcherService.getCriticalRoads()
+        criticalRoads: dataFetcherService.getCriticalRoads(),
       });
     }
   }
@@ -80,12 +89,14 @@ export class DecisionController {
    */
   public async postWebhookNotify(req: Request, res: Response): Promise<void> {
     const payload = req.body;
-    logger.info(`📡 Webhook de notificação recebido: ${JSON.stringify(payload)}`);
+    logger.info(
+      `📡 Webhook de notificação recebido: ${JSON.stringify(payload)}`,
+    );
 
     res.json({
       success: true,
       receivedAt: new Date().toISOString(),
-      message: 'Notificação de status registrada com sucesso.'
+      message: "Notificação de status registrada com sucesso.",
     });
   }
 }

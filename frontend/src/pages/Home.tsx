@@ -1,13 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { fetchDecision, fetchLocationInfo } from '../services/api.js';
-import { DecisionResult, CriticalRoad } from '../types/index.js';
-import { DecisionDisplay } from '../components/DecisionDisplay.js';
-import { PrintButton } from '../components/PrintButton.js';
-import { RssIcon } from '../components/RssIcon.js';
-import { GeoConsentModal, checkGeoConsent } from '../components/GeoConsentModal.js';
-import { ErrorFallback } from '../components/ErrorFallback.js';
-import { ShieldAlert, BarChart3, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from "react";
+import { fetchDecision, fetchLocationInfo } from "../services/api.js";
+import { DecisionResult, CriticalRoad } from "../types/index.js";
+import { DecisionDisplay } from "../components/DecisionDisplay.js";
+import { PrintButton } from "../components/PrintButton.js";
+import { RssIcon } from "../components/RssIcon.js";
+import {
+  GeoConsentModal,
+  checkGeoConsent,
+} from "../components/GeoConsentModal.js";
+import { ErrorFallback } from "../components/ErrorFallback.js";
+import { ShieldAlert, BarChart3, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Home: React.FC = () => {
   const [decision, setDecision] = useState<DecisionResult | null>(null);
@@ -24,14 +27,17 @@ export const Home: React.FC = () => {
       setDecision(data);
 
       // Atualiza classe do body para o tema reativo correspondente (RF-06 / US-03)
-      if (data.value === 'SIM') {
-        document.body.className = 'theme-alert bg-brand-alert min-h-screen font-sans text-white transition-colors duration-300';
+      if (data.value === "SIM") {
+        document.body.className =
+          "theme-alert bg-brand-alert min-h-screen font-sans text-white transition-colors duration-300";
       } else {
-        document.body.className = 'theme-neutral bg-brand-blue min-h-screen font-sans text-white transition-colors duration-300';
+        document.body.className =
+          "theme-neutral bg-brand-blue min-h-screen font-sans text-white transition-colors duration-300";
       }
     } catch {
       setError(true);
-      document.body.className = 'theme-fallback bg-brand-gray-light min-h-screen font-sans text-slate-800 transition-colors duration-300';
+      document.body.className =
+        "theme-fallback bg-brand-gray-light min-h-screen font-sans text-slate-800 transition-colors duration-300";
     } finally {
       setLoading(false);
     }
@@ -73,8 +79,12 @@ export const Home: React.FC = () => {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-brand-blue text-white">
         <Loader2 className="w-12 h-12 animate-spin mb-4" />
-        <p className="text-xl font-bold tracking-wide">Avaliando condições do Recife...</p>
-        <span className="text-xs text-white/70 mt-2">Consultando maré, chuva e rios</span>
+        <p className="text-xl font-bold tracking-wide">
+          Avaliando condições do Recife...
+        </p>
+        <span className="text-xs text-white/70 mt-2">
+          Consultando maré, chuva e rios
+        </span>
       </main>
     );
   }
@@ -84,7 +94,7 @@ export const Home: React.FC = () => {
   }
 
   return (
-    <main 
+    <main
       className="min-h-screen flex flex-col justify-between p-4 sm:p-6 md:p-8 relative overflow-hidden"
       role="main"
     >
@@ -126,7 +136,9 @@ export const Home: React.FC = () => {
       <footer className="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/20 z-10 text-xs text-white/80">
         <div className="flex items-center gap-1.5">
           <ShieldAlert className="w-4 h-4 opacity-80" />
-          <span>Baseado em dados abertos: Open-Meteo, Marinha do Brasil e CEMADEN.</span>
+          <span>
+            Baseado em dados abertos: Open-Meteo, Marinha do Brasil e CEMADEN.
+          </span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -135,10 +147,7 @@ export const Home: React.FC = () => {
       </footer>
 
       {/* Modal de Consentimento de IP */}
-      <GeoConsentModal 
-        isOpen={showGeoModal} 
-        onConsent={handleGeoConsent} 
-      />
+      <GeoConsentModal isOpen={showGeoModal} onConsent={handleGeoConsent} />
     </main>
   );
 };

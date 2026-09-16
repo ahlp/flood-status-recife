@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { fetchLatestRss, downloadRssXml } from '../services/api.js';
-import { RSSFeedItem } from '../types/index.js';
-import { Rss, Download, ExternalLink, ArrowLeft, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { fetchLatestRss, downloadRssXml } from "../services/api.js";
+import { RSSFeedItem } from "../types/index.js";
+import { Rss, Download, ExternalLink, ArrowLeft, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const RSSView: React.FC = () => {
   const [item, setItem] = useState<RSSFeedItem | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.body.className = 'bg-white font-sans text-slate-900 min-h-screen';
+    document.body.className = "bg-white font-sans text-slate-900 min-h-screen";
     fetchLatestRss().then((data) => {
       setItem(data);
       setLoading(false);
@@ -18,27 +18,34 @@ export const RSSView: React.FC = () => {
 
   // Formata snippet para manter entre 200 e 400 caracteres sem cortar palavras
   const formatSnippet = (desc: string): string => {
-    if (!desc) return '';
+    if (!desc) return "";
     if (desc.length >= 200 && desc.length <= 400) return desc;
     if (desc.length > 400) {
       const cut = desc.substring(0, 395);
-      const lastSpace = cut.lastIndexOf(' ');
-      return (lastSpace > 200 ? cut.substring(0, lastSpace) : cut) + '...';
+      const lastSpace = cut.lastIndexOf(" ");
+      return (lastSpace > 200 ? cut.substring(0, lastSpace) : cut) + "...";
     }
     // Se for menor que 200, complementa contextualmente
     return `${desc} Este resumo é gerado automaticamente pelo algoritmo preditivo com base nas condições meteorológicas e de maré do Recife.`;
   };
 
-  const truncatedTitle = item?.title && item.title.length > 100 
-    ? item.title.substring(0, 97) + '...' 
-    : item?.title || '';
+  const truncatedTitle =
+    item?.title && item.title.length > 100
+      ? item.title.substring(0, 97) + "..."
+      : item?.title || "";
 
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col justify-between p-4 sm:p-8">
       {/* Header */}
-      <header role="banner" className="w-full max-w-3xl mx-auto flex items-center justify-between pb-6 border-b border-slate-200">
+      <header
+        role="banner"
+        className="w-full max-w-3xl mx-auto flex items-center justify-between pb-6 border-b border-slate-200"
+      >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 flex items-center justify-center text-slate-900" aria-hidden="true">
+          <div
+            className="w-8 h-8 flex items-center justify-center text-slate-900"
+            aria-hidden="true"
+          >
             <Rss className="w-8 h-8" />
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -66,7 +73,13 @@ export const RSSView: React.FC = () => {
         ) : item ? (
           <article className="space-y-6">
             <div className="text-xs font-semibold uppercase tracking-wider text-sky-600">
-              Última Publicação • {item.pubDate ? new Date(item.pubDate).toLocaleDateString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Hoje'}
+              Última Publicação •{" "}
+              {item.pubDate
+                ? new Date(item.pubDate).toLocaleDateString("pt-BR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "Hoje"}
             </div>
 
             <h2 className="rss-title text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 leading-tight">
@@ -104,7 +117,10 @@ export const RSSView: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer role="contentinfo" className="w-full max-w-3xl mx-auto pt-6 border-t border-slate-200 text-xs text-slate-500 text-center">
+      <footer
+        role="contentinfo"
+        className="w-full max-w-3xl mx-auto pt-6 border-t border-slate-200 text-xs text-slate-500 text-center"
+      >
         Fico em Casa Hoje? — Atualização diária via feed estático RSS 2.0
       </footer>
     </div>

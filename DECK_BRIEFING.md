@@ -7,6 +7,7 @@ Inspiração Visual e Conceitual: shouldideploy.today
 Escopo do Projeto: Recife e Região Metropolitana (RMR)
 
 Objetivo: Uma aplicação web ultrassimples, sem cadastro e sem atrito, que responde de forma direta com SIM ou NÃO se o cidadão deve ficar em casa devido ao risco de ilhamento urbano em Recife, mudando todo o layout da página conforme a decisão calculada pela IA.
+
 1. O Conceito e Experiência do Usuário (UI/UX)
 
 Assim como o Should I Deploy Today?, a aplicação é focada em respostas instantâneas, minimalistas e sem necessidade de navegação complexa:
@@ -31,20 +32,18 @@ A decisão de sair para o trabalho ou faculdade em Recife precisa acontecer logo
 
     Nível dos Rios (Capibaribe, Tejipió e Beberibe).
 
-Quando esses três fatores se alinham, vias cruciais (como Agamenon Magalhães, Mascarenhas de Morais e II Perimetral) ficam ilhadas.
-3. Diretrizes Técnicas e Fontes de Dados
+Quando esses três fatores se alinham, vias cruciais (como Agamenon Magalhães, Mascarenhas de Morais e II Perimetral) ficam ilhadas. 3. Diretrizes Técnicas e Fontes de Dados
 
     Somente Bases Abertas: Todo o pipeline de dados utiliza exclusivamente APIs meteorológicas e bases públicas governamentais gratuitas e abertas.
 
     Sem Monitoramento em Tempo Real Continuo: Não há necessidade de infraestrutura cara de streaming em tempo real. O sistema executa uma consulta e inferência pontual todas as manhãs (ex: às 05h30).
 
 Fontes de Dados Utilizadas:
-Categoria	Fonte / Base Aberta	Dado Extraído para a Manhã
-Previsão Pluvial	Open-Meteo API / INMET / APAC	Chuva acumulada na madrugada e previsão horária entre 6h e 10h.
-Maré	Tábua de Marés da Marinha do Brasil	Horário exato do pico de maré alta matutino e altura (m).
-Nível Fluvial	CEMADEN / APAC	Cota dos rios no início do dia.
-Pontos de Risco	Dados Abertos Recife	Mapeamento geográfico de histórico de alagamentos por bairro/via.
-4. O Motor de Inteligência Artificial
+Categoria Fonte / Base Aberta Dado Extraído para a Manhã
+Previsão Pluvial Open-Meteo API / INMET / APAC Chuva acumulada na madrugada e previsão horária entre 6h e 10h.
+Maré Tábua de Marés da Marinha do Brasil Horário exato do pico de maré alta matutino e altura (m).
+Nível Fluvial CEMADEN / APAC Cota dos rios no início do dia.
+Pontos de Risco Dados Abertos Recife Mapeamento geográfico de histórico de alagamentos por bairro/via. 4. O Motor de Inteligência Artificial
 
 A IA atua como um classificador preditivo de risco diário baseado no histórico acumulado da cidade:
 
@@ -70,14 +69,11 @@ Decisa˜o (Ficar em Casa?)=f(Chuva Prevista Matutina,Altura da Mareˊ no Pico,N�
 
     Distribuição: Web Frontend + Feed RSS.
 
-
 _Exportado em 16/09/2026_
-
 
 ---
 
 ## Contexto Aprimorado
-
 
 **Visão Geral**
 
@@ -94,7 +90,6 @@ O público-alvo são trabalhadores, estudantes, moradores e profissionais que pr
 O valor gerado: redução de incidentes de mobilidade urbana, economia de recursos (combustível, tempo), maior segurança pessoal e fortalecimento da cultura de prevenção comunitária.
 
 **Funcionalidades**
-
 
 #### Página Única Instantânea
 
@@ -138,17 +133,22 @@ Um dashboard interno coleta métricas de latência, taxa de sucesso das chamadas
 
 **Fluxos do Sistema**
 
-- Fluxo 1 – Usuário na manhã: 
+- Fluxo 1 – Usuário na manhã:
+
 1. Acessa URL principal.
 2. Sistema consulta cache; se existir decisão atual (até 24h), devolve página.
 3. Se não houver cache, backend executa job de cálculo (chama APIs, roda modelo).
 4. Resultado é salvo no cache e enviado ao usuário em tema dinâmico.
 5. Usuário pode copiar a URL ou usar RSS para automação.
-- Fluxo 2 – Integração via RSS: 
+
+- Fluxo 2 – Integração via RSS:
+
 1. Usuário adiciona feed RSS na agenda de integração (Slack, Discord, leitor).
 2. Cada manhã às 05h30, backend publica item no feed com título “Decisão do dia: Ficar em casa? SIM/NÃO” e corpo contendo justificativa.
 3. O usuário recebe a mensagem automaticamente no canal escolhido.
-- Fluxo 3 – Falha de Dados Externos: 
+
+- Fluxo 3 – Falha de Dados Externos:
+
 1. Se qualquer API externa falhar, job grava log de erro.
 2. Sistema retorna página estática de “Erro de dados”.
 3. Usuário pode tentar novamente mais tarde ou consultar o feed RSS (que permanece funcional).
@@ -173,45 +173,46 @@ Este documento descreve, de forma detalhada e concreta, todos os requisitos func
 
 > **Formato**: Markdown  
 > **Idioma**: Português brasileiro  
-> **Público-alvo**: Desenvolvedores, arquitetos, testadores e stakeholders técnicos.  
+> **Público-alvo**: Desenvolvedores, arquitetos, testadores e stakeholders técnicos.
 
 ---
 
 ## 1. Requisitos Funcionais
 
-| # | Nome | Descrição | Prioridade (P) | Dependências |
-|---|------|-----------|-----------------|--------------|
-| RF‑01 | **Resposta instantânea na primeira página** | Ao acessar a URL principal (`https://ficoemcasa.com.br/`), o sistema deve exibir imediatamente a decisão de “SIM” ou “NÃO” sem qualquer etapa adicional (login, formulário). | P1 | - |
-| RF‑02 | **Cálculo diário da decisão** | A cada dia às 05h30 (horário local do Recife) um job automático coleta dados das APIs externas, executa o modelo preditivo e armazena a decisão. | P1 | RF‑01, RF‑04 |
-| RF‑03 | **Persistência da decisão** | O resultado diário deve ser armazenado em cache (Redis) com TTL de 24 h para que todas as requisições subsequentes retornem o mesmo valor até o próximo cálculo. | P1 | RF‑02 |
-| RF‑04 | **Fallback estático** | Se qualquer fonte externa falhar, a página exibida deve ser uma versão estática informando “Não foi possível obter dados hoje. Por favor, tente novamente amanhã.” | P2 | - |
-| RF‑05 | **Feed RSS diário** | Um endpoint (`/rss`) gera um item RSS contendo título “Decisão do dia: Ficar em casa? SIM/NÃO” e corpo com justificativa. | P1 | RF‑02 |
-| RF‑06 | **Tema visual dinâmico** | O layout da página deve mudar automaticamente entre:
-  * Tema neutro/azul (decisão “NÃO – Pode sair”)  
-  * Tema alerta vermelho/orange (decisão “SIM – Fica em casa”)
+| #     | Nome                                        | Descrição                                                                                                                                                                    | Prioridade (P) | Dependências |
+| ----- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------ |
+| RF‑01 | **Resposta instantânea na primeira página** | Ao acessar a URL principal (`https://ficoemcasa.com.br/`), o sistema deve exibir imediatamente a decisão de “SIM” ou “NÃO” sem qualquer etapa adicional (login, formulário). | P1             | -            |
+| RF‑02 | **Cálculo diário da decisão**               | A cada dia às 05h30 (horário local do Recife) um job automático coleta dados das APIs externas, executa o modelo preditivo e armazena a decisão.                             | P1             | RF‑01, RF‑04 |
+| RF‑03 | **Persistência da decisão**                 | O resultado diário deve ser armazenado em cache (Redis) com TTL de 24 h para que todas as requisições subsequentes retornem o mesmo valor até o próximo cálculo.             | P1             | RF‑02        |
+| RF‑04 | **Fallback estático**                       | Se qualquer fonte externa falhar, a página exibida deve ser uma versão estática informando “Não foi possível obter dados hoje. Por favor, tente novamente amanhã.”           | P2             | -            |
+| RF‑05 | **Feed RSS diário**                         | Um endpoint (`/rss`) gera um item RSS contendo título “Decisão do dia: Ficar em casa? SIM/NÃO” e corpo com justificativa.                                                    | P1             | RF‑02        |
+| RF‑06 | **Tema visual dinâmico**                    | O layout da página deve mudar automaticamente entre:                                                                                                                         |
+
+- Tema neutro/azul (decisão “NÃO – Pode sair”)
+- Tema alerta vermelho/orange (decisão “SIM – Fica em casa”)
   com transição CSS de 0.3 s e contraste mínimo de 4.5:1 para acessibilidade. | P2 | RF‑01 |
-| RF‑07 | **Justificativa contextual** | Abaixo da decisão deve aparecer um parágrafo curto (≤ 90 caracteres) explicando os fatores que influenciaram a classificação (ex.: “Maré alta prevista em 7h30 + chuva de 35 mm”). | P2 | RF‑02 |
-| RF‑08 | **Geolocalização opcional** | Se o usuário consentir (via prompt de navegador) o sistema pode detectar IP e exibir vias críticas relevantes na justificativa. | P3 | RF‑01 |
-| RF‑09 | **Exportação em PNG** | Um botão “Imprimir” gera uma imagem da página atual (layout + decisão + justificativa) que pode ser salva ou impressa. | P4 | RF‑01, RF‑06 |
-| RF‑10 | **Monitoramento de métricas** | O backend deve expor endpoints `/metrics` (Prometheus format) com latência das chamadas externas, taxa de sucesso e número de requisições diárias. | P3 | - |
-| RF‑11 | **Logs detalhados** | Cada execução do job diário deve gerar logs estruturados (JSON) contendo timestamp, status de cada API, tempo de resposta, erro se houver e decisão final. | P2 | RF‑02 |
+  | RF‑07 | **Justificativa contextual** | Abaixo da decisão deve aparecer um parágrafo curto (≤ 90 caracteres) explicando os fatores que influenciaram a classificação (ex.: “Maré alta prevista em 7h30 + chuva de 35 mm”). | P2 | RF‑02 |
+  | RF‑08 | **Geolocalização opcional** | Se o usuário consentir (via prompt de navegador) o sistema pode detectar IP e exibir vias críticas relevantes na justificativa. | P3 | RF‑01 |
+  | RF‑09 | **Exportação em PNG** | Um botão “Imprimir” gera uma imagem da página atual (layout + decisão + justificativa) que pode ser salva ou impressa. | P4 | RF‑01, RF‑06 |
+  | RF‑10 | **Monitoramento de métricas** | O backend deve expor endpoints `/metrics` (Prometheus format) com latência das chamadas externas, taxa de sucesso e número de requisições diárias. | P3 | - |
+  | RF‑11 | **Logs detalhados** | Cada execução do job diário deve gerar logs estruturados (JSON) contendo timestamp, status de cada API, tempo de resposta, erro se houver e decisão final. | P2 | RF‑02 |
 
 ---
 
 ## 2. Requisitos Não Funcionais
 
-| # | Nome | Descrição | Métrica / Valor |
-|---|------|-----------|-----------------|
-| RNF‑01 | **Tempo de resposta** | A página principal deve responder em ≤ 1,5 s para 95 % das requisições. | 1.5 s |
-| RNF‑02 | **Escalabilidade horizontal** | O sistema deve suportar até 10 000 acessos simultâneos sem degradação perceptível. | 10k concurrent users |
-| RNF‑03 | **Disponibilidade** | Disponibilidade mínima de 99,9 % (downtime máximo de 43 min por ano). | 99.9 % |
-| RNF‑04 | **Segurança da API externa** | Todas as chamadas externas devem usar HTTPS; tokens ou chaves são armazenados no Vault/Secret Manager e nunca expostos no código fonte. | TLS 1.2+ |
-| RNF‑05 | **Resiliência** | Em caso de falha de uma API, o job deve tentar 3 vezes com backoff exponencial (0.5s, 1s, 2s). Se ainda falhar, registra erro e continua com fallback estático. | 3 retries |
-| RNF‑06 | **Acessibilidade** | Página deve atender WCAG 2.1 AA: contraste mínimo 4.5:1, navegação por teclado, texto alternativo para imagens, ARIA labels nos botões. | WCAG 2.1 AA |
-| RNF‑07 | **Compatibilidade de navegador** | Suporte a Chrome 80+, Firefox 75+, Edge 80+, Safari 13+ (mobile). | Browsers list |
-| RNF‑08 | **Tempo de cache** | TTL do Redis = 24 h; se o job falhar, o cache pode servir o valor antigo até expirar. | 24 h |
-| RNF‑09 | **Consumo de recursos** | Job diário deve usar ≤ 500 MB RAM e ≤ 1 CPU core em ambiente Docker. | ≤ 500 MB RAM |
-| RNF‑10 | **Localização do servidor** | Instância hospedada em infraestrutura brasileira (AWS us-east-2 / GCP southamerica‑east). | Brazil region |
+| #      | Nome                             | Descrição                                                                                                                                                       | Métrica / Valor      |
+| ------ | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| RNF‑01 | **Tempo de resposta**            | A página principal deve responder em ≤ 1,5 s para 95 % das requisições.                                                                                         | 1.5 s                |
+| RNF‑02 | **Escalabilidade horizontal**    | O sistema deve suportar até 10 000 acessos simultâneos sem degradação perceptível.                                                                              | 10k concurrent users |
+| RNF‑03 | **Disponibilidade**              | Disponibilidade mínima de 99,9 % (downtime máximo de 43 min por ano).                                                                                           | 99.9 %               |
+| RNF‑04 | **Segurança da API externa**     | Todas as chamadas externas devem usar HTTPS; tokens ou chaves são armazenados no Vault/Secret Manager e nunca expostos no código fonte.                         | TLS 1.2+             |
+| RNF‑05 | **Resiliência**                  | Em caso de falha de uma API, o job deve tentar 3 vezes com backoff exponencial (0.5s, 1s, 2s). Se ainda falhar, registra erro e continua com fallback estático. | 3 retries            |
+| RNF‑06 | **Acessibilidade**               | Página deve atender WCAG 2.1 AA: contraste mínimo 4.5:1, navegação por teclado, texto alternativo para imagens, ARIA labels nos botões.                         | WCAG 2.1 AA          |
+| RNF‑07 | **Compatibilidade de navegador** | Suporte a Chrome 80+, Firefox 75+, Edge 80+, Safari 13+ (mobile).                                                                                               | Browsers list        |
+| RNF‑08 | **Tempo de cache**               | TTL do Redis = 24 h; se o job falhar, o cache pode servir o valor antigo até expirar.                                                                           | 24 h                 |
+| RNF‑09 | **Consumo de recursos**          | Job diário deve usar ≤ 500 MB RAM e ≤ 1 CPU core em ambiente Docker.                                                                                            | ≤ 500 MB RAM         |
+| RNF‑10 | **Localização do servidor**      | Instância hospedada em infraestrutura brasileira (AWS us-east-2 / GCP southamerica‑east).                                                                       | Brazil region        |
 
 ---
 
@@ -219,36 +220,36 @@ Este documento descreve, de forma detalhada e concreta, todos os requisitos func
 
 ### 3.1 Frontend
 
-| Elemento | Descrição | Exemplo |
-|----------|-----------|---------|
-| **Header** | Logo “Fico em Casa Hoje?” alinhado à esquerda, sem link. | ![logo](link) |
-| **Decision Box** | Texto central (“SIM” ou “NÃO”) em fonte grande (48 px), cor verde/laranja conforme tema. | <h1 style="color:#FF4D00">SIM</h1> |
-| **Justificativa** | Parágrafo abaixo do Decision Box, fonte 18 px, linha de 80 caracteres máximo. | “Maré alta prevista em 07h30 + chuva de 35 mm” |
-| **Export Button** | Botão “Imprimir” no canto inferior direito; ícone de impressora. | <button>📠 Imprimir</button> |
-| **RSS Icon** | Link para `/rss` com ícone RSS, ao lado do botão. | 🔗 /rss |
-| **Geolocalização Prompt** | Modal pequeno “Deseja exibir vias críticas próximas?” (Sim/Não). | <div class="modal">... </div> |
+| Elemento                  | Descrição                                                                                | Exemplo                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **Header**                | Logo “Fico em Casa Hoje?” alinhado à esquerda, sem link.                                 | ![logo](link)                                  |
+| **Decision Box**          | Texto central (“SIM” ou “NÃO”) em fonte grande (48 px), cor verde/laranja conforme tema. | <h1 style="color:#FF4D00">SIM</h1>             |
+| **Justificativa**         | Parágrafo abaixo do Decision Box, fonte 18 px, linha de 80 caracteres máximo.            | “Maré alta prevista em 07h30 + chuva de 35 mm” |
+| **Export Button**         | Botão “Imprimir” no canto inferior direito; ícone de impressora.                         | <button>📠 Imprimir</button>                   |
+| **RSS Icon**              | Link para `/rss` com ícone RSS, ao lado do botão.                                        | 🔗 /rss                                        |
+| **Geolocalização Prompt** | Modal pequeno “Deseja exibir vias críticas próximas?” (Sim/Não).                         | <div class="modal">... </div>                  |
 
 ### 3.2 Backend
 
-| Endpoint | Método | Path | Descrição | Exemplo de Resposta |
-|----------|--------|------|-----------|---------------------|
-| **GET** | `/` | Página principal | Retorna HTML com decisão e justificativa. | `<html>...</html>` |
-| **GET** | `/rss` | Feed RSS diário | XML contendo título, link, descrição. | `<?xml version="1.0"?> <rss>...</rss>` |
-| **GET** | `/metrics` | Métricas Prometheus | Texto plano com métricas. | `feh_requests_total 12345` |
-| **POST** | `/webhook/notify` | Opcional para integração externa (ex.: transporte) | Recebe JSON `{ "decision": "SIM", "timestamp": ... }`. | HTTP 200 OK |
+| Endpoint | Método            | Path                                               | Descrição                                              | Exemplo de Resposta                    |
+| -------- | ----------------- | -------------------------------------------------- | ------------------------------------------------------ | -------------------------------------- |
+| **GET**  | `/`               | Página principal                                   | Retorna HTML com decisão e justificativa.              | `<html>...</html>`                     |
+| **GET**  | `/rss`            | Feed RSS diário                                    | XML contendo título, link, descrição.                  | `<?xml version="1.0"?> <rss>...</rss>` |
+| **GET**  | `/metrics`        | Métricas Prometheus                                | Texto plano com métricas.                              | `feh_requests_total 12345`             |
+| **POST** | `/webhook/notify` | Opcional para integração externa (ex.: transporte) | Recebe JSON `{ "decision": "SIM", "timestamp": ... }`. | HTTP 200 OK                            |
 
 ---
 
 ## 4. Atributos de Qualidade
 
-| Nome | Significado | Como será garantido |
-|------|-------------|---------------------|
-| **Usabilidade** | Usuário deve obter a decisão em < 1 s e entender o risco sem esforço adicional. | Testes UX com usuários reais; métricas de tempo de resposta. |
-| **Manutenibilidade** | Código modular, documentação inline (docstrings), testes unitários 80 % coverage. | CI/CD com linting + cobertura. |
-| **Testabilidade** | Cada componente isolado (data fetcher, model predictor, cache) tem testes automatizados. | PyTest/UnitTest para backend; Jest/Cypress para frontend. |
-| **Portabilidade** | Dockerfile oficial, suporte a Kubernetes. | Imagem Docker multi‑stage, Helm chart. |
-| **Eficiência** | Uso otimizado de memória e CPU, evitando chamadas redundantes. | Cache Redis + batch requests. |
-| **Resiliência** | Sistema continua operando com fallback estático mesmo quando 1 ou mais APIs falham. | Estratégia de retries + fallback page. |
+| Nome                 | Significado                                                                              | Como será garantido                                          |
+| -------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Usabilidade**      | Usuário deve obter a decisão em < 1 s e entender o risco sem esforço adicional.          | Testes UX com usuários reais; métricas de tempo de resposta. |
+| **Manutenibilidade** | Código modular, documentação inline (docstrings), testes unitários 80 % coverage.        | CI/CD com linting + cobertura.                               |
+| **Testabilidade**    | Cada componente isolado (data fetcher, model predictor, cache) tem testes automatizados. | PyTest/UnitTest para backend; Jest/Cypress para frontend.    |
+| **Portabilidade**    | Dockerfile oficial, suporte a Kubernetes.                                                | Imagem Docker multi‑stage, Helm chart.                       |
+| **Eficiência**       | Uso otimizado de memória e CPU, evitando chamadas redundantes.                           | Cache Redis + batch requests.                                |
+| **Resiliência**      | Sistema continua operando com fallback estático mesmo quando 1 ou mais APIs falham.      | Estratégia de retries + fallback page.                       |
 
 ---
 
@@ -265,7 +266,7 @@ Este documento descreve, de forma detalhada e concreta, todos os requisitos func
 ---
 
 > **Observação Final:**  
-> Todos os requisitos foram formulados para permitir uma implementação ágil, com ciclos de release curtos (sem mais que 2 semanas por sprint). A equipe deve priorizar a entrega do MVP contendo RF‑01, RF‑02, RF‑03, RF‑04, RF‑05 e RF‑06 antes de evoluir para funcionalidades opcionais (RF‑08, RF‑09, RF‑10).  
+> Todos os requisitos foram formulados para permitir uma implementação ágil, com ciclos de release curtos (sem mais que 2 semanas por sprint). A equipe deve priorizar a entrega do MVP contendo RF‑01, RF‑02, RF‑03, RF‑04, RF‑05 e RF‑06 antes de evoluir para funcionalidades opcionais (RF‑08, RF‑09, RF‑10).
 
 ---
 
@@ -273,53 +274,59 @@ Este documento descreve, de forma detalhada e concreta, todos os requisitos func
 
 # Plano de Projeto – “Fico em Casa Hoje?” (FEH)
 
-## 1. Objetivos do Projeto  
-O projeto **“Fico em Casa Hoje?”** tem como finalidade fornecer, de forma ultrassimplificada e sem atrito, uma resposta imediata (“SIM” ou “NÃO”) para os cidadãos do Recife e Região Metropolitana sobre a necessidade de permanecerem em casa no início da manhã.  
+## 1. Objetivos do Projeto
 
-| Objetivo | Descrição | Métrica de Sucesso |
-|----------|-----------|--------------------|
-| **Reduzir incidentes de mobilidade urbana** | Diminuição das ocorrências de pessoas sendo atingidas por enchentes matinais, evitando congestionamentos e danos materiais. | Taxa de incidentes menores que 20 % em relação ao período pré‑implementação (período de 3 meses). |
-| **Agilizar a tomada de decisão** | Garantir que a informação crítica esteja disponível para cada cidadão dentro de < 1,5 s após o acesso à página. | 95 % das requisições respondidas em ≤ 1,5 s. |
-| **Maximizar a confiabilidade dos dados abertos** | Integrar de forma resiliente APIs públicas (meteorológicas, marítimas e fluviais) com tolerância a falhas externas. | Taxa de disponibilidade do sistema ≥ 99,9 % anual. |
-| **Promover cultura de prevenção** | Educar usuários sobre os fatores que geram risco de ilhamento urbano através de justificativas curtas e contextualizadas. | 80 % dos usuários que acessam a página confirmam compreensão da causa via pesquisa pós‑uso (NPS > 70). |
+O projeto **“Fico em Casa Hoje?”** tem como finalidade fornecer, de forma ultrassimplificada e sem atrito, uma resposta imediata (“SIM” ou “NÃO”) para os cidadãos do Recife e Região Metropolitana sobre a necessidade de permanecerem em casa no início da manhã.
 
-## 2. Escopo do Projeto  
+| Objetivo                                         | Descrição                                                                                                                   | Métrica de Sucesso                                                                                     |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Reduzir incidentes de mobilidade urbana**      | Diminuição das ocorrências de pessoas sendo atingidas por enchentes matinais, evitando congestionamentos e danos materiais. | Taxa de incidentes menores que 20 % em relação ao período pré‑implementação (período de 3 meses).      |
+| **Agilizar a tomada de decisão**                 | Garantir que a informação crítica esteja disponível para cada cidadão dentro de < 1,5 s após o acesso à página.             | 95 % das requisições respondidas em ≤ 1,5 s.                                                           |
+| **Maximizar a confiabilidade dos dados abertos** | Integrar de forma resiliente APIs públicas (meteorológicas, marítimas e fluviais) com tolerância a falhas externas.         | Taxa de disponibilidade do sistema ≥ 99,9 % anual.                                                     |
+| **Promover cultura de prevenção**                | Educar usuários sobre os fatores que geram risco de ilhamento urbano através de justificativas curtas e contextualizadas.   | 80 % dos usuários que acessam a página confirmam compreensão da causa via pesquisa pós‑uso (NPS > 70). |
+
+## 2. Escopo do Projeto
+
 O escopo está dividido em **Módulos Funcionais** (o que será entregue) e **Limitações de Entrega** (o que não será entregue nesta primeira versão).
 
 ### 2.1 Módulos Funcionais
-| Módulo | Descrição | Dependências |
-|--------|-----------|--------------|
-| **Frontend – Página Única** | HTML/CSS/JS responsivo, sem login, exibindo decisão e justificativa. | RF‑01, RF‑06, RF‑07 |
-| **Backend – API de Dados** | Serviço REST que coleta dados das APIs externas, executa modelo XGBoost, armazena em Redis e expõe `/`, `/rss`, `/metrics`. | RF‑02, RF‑03, RF‑05, RF‑10 |
-| **Job Scheduler** | Job cron/airflow rodando às 05h30, realizando fetch + inferência. | RF‑02 |
-| **Cache & Persistência** | Redis TTL 24 h para decisões; logs em bucket S3 (retenção 30 dias). | RF‑03, RNF‑08 |
-| **Fallback Estático** | Página estática em caso de falha externa. | RF‑04 |
-| **RSS Feed** | Endpoint `/rss` gerando item diário. | RF‑05 |
-| **Exportação PNG** | Botão “Imprimir” usando html2canvas ou similar. | RF‑09 |
-| **Geolocalização Opcional** | Prompt de consentimento + exibição de vias críticas via IP. | RF‑08 |
-| **Métricas & Logs** | Prometheus `/metrics`; logs estruturados JSON. | RF‑10, RF‑11 |
+
+| Módulo                      | Descrição                                                                                                                   | Dependências               |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Frontend – Página Única** | HTML/CSS/JS responsivo, sem login, exibindo decisão e justificativa.                                                        | RF‑01, RF‑06, RF‑07        |
+| **Backend – API de Dados**  | Serviço REST que coleta dados das APIs externas, executa modelo XGBoost, armazena em Redis e expõe `/`, `/rss`, `/metrics`. | RF‑02, RF‑03, RF‑05, RF‑10 |
+| **Job Scheduler**           | Job cron/airflow rodando às 05h30, realizando fetch + inferência.                                                           | RF‑02                      |
+| **Cache & Persistência**    | Redis TTL 24 h para decisões; logs em bucket S3 (retenção 30 dias).                                                         | RF‑03, RNF‑08              |
+| **Fallback Estático**       | Página estática em caso de falha externa.                                                                                   | RF‑04                      |
+| **RSS Feed**                | Endpoint `/rss` gerando item diário.                                                                                        | RF‑05                      |
+| **Exportação PNG**          | Botão “Imprimir” usando html2canvas ou similar.                                                                             | RF‑09                      |
+| **Geolocalização Opcional** | Prompt de consentimento + exibição de vias críticas via IP.                                                                 | RF‑08                      |
+| **Métricas & Logs**         | Prometheus `/metrics`; logs estruturados JSON.                                                                              | RF‑10, RF‑11               |
 
 ### 2.2 Limitações de Entrega
-- **Integração com transporte público** (webhook opcional) será entregue em *Sprint 5*.
-- **Histórico diário em gráfico** no footer é funcionalidade opcional para *Sprint 6*.
+
+- **Integração com transporte público** (webhook opcional) será entregue em _Sprint 5_.
+- **Histórico diário em gráfico** no footer é funcionalidade opcional para _Sprint 6_.
 - **Notificações push via celular** não estão previstas neste ciclo inicial.
 - **Armazenamento de dados persistentes (banco relacional)** será evitado; apenas Redis e logs.
 
-## 3. Cronograma  
+## 3. Cronograma
+
 A execução segue ciclos ágeis (sprints) de 2 semanas, totalizando 8 sprints (16 semanas). Cada sprint tem objetivo específico:
 
-| Sprint | Data Início | Data Término | Objetivo Principal | Entregáveis |
-|--------|-------------|--------------|--------------------|-------------|
-| **Sprint 1** | 01/10/2026 | 15/10/2026 | Configuração de infraestrutura, Docker, CI/CD. | Dockerfiles, GitHub Actions, pipeline Terraform |
-| **Sprint 2** | 16/10/2026 | 30/10/2026 | Implementação do job scheduler e coleta de dados (Open‑Meteo). | Script Python, cronjob, testes unitários |
-| **Sprint 3** | 31/10/2026 | 14/11/2026 | Integração da Marinha do Brasil (maré) e CEMADEN (nível fluvial). | Modulo de fetcher, mocks, documentação |
-| **Sprint 4** | 15/11/2026 | 29/11/2026 | Desenvolvimento do modelo XGBoost + API `/` + cache Redis. | Modelo treinado, endpoints REST, testes de carga |
-| **Sprint 5** | 30/11/2026 | 14/12/2026 | Implementação do RSS feed e fallback estático. | Endpoint `/rss`, página de erro estática |
-| **Sprint 6** | 15/12/2026 | 29/12/2026 | Frontend completo, tema dinâmico, export PNG, geolocalização opcional. | Página HTML/CSS/JS, modal de consentimento |
-| **Sprint 7** | 30/12/2026 | 13/01/2027 | Métricas Prometheus + logs estruturados; testes de performance. | `/metrics` endpoint, Grafana dashboard mock |
-| **Sprint 8** | 14/01/2027 | 28/01/2027 | Testes de integração, QA final, documentação e lançamento beta. | Release no staging, documentação técnica, plano de rollout |
+| Sprint       | Data Início | Data Término | Objetivo Principal                                                     | Entregáveis                                                |
+| ------------ | ----------- | ------------ | ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Sprint 1** | 01/10/2026  | 15/10/2026   | Configuração de infraestrutura, Docker, CI/CD.                         | Dockerfiles, GitHub Actions, pipeline Terraform            |
+| **Sprint 2** | 16/10/2026  | 30/10/2026   | Implementação do job scheduler e coleta de dados (Open‑Meteo).         | Script Python, cronjob, testes unitários                   |
+| **Sprint 3** | 31/10/2026  | 14/11/2026   | Integração da Marinha do Brasil (maré) e CEMADEN (nível fluvial).      | Modulo de fetcher, mocks, documentação                     |
+| **Sprint 4** | 15/11/2026  | 29/11/2026   | Desenvolvimento do modelo XGBoost + API `/` + cache Redis.             | Modelo treinado, endpoints REST, testes de carga           |
+| **Sprint 5** | 30/11/2026  | 14/12/2026   | Implementação do RSS feed e fallback estático.                         | Endpoint `/rss`, página de erro estática                   |
+| **Sprint 6** | 15/12/2026  | 29/12/2026   | Frontend completo, tema dinâmico, export PNG, geolocalização opcional. | Página HTML/CSS/JS, modal de consentimento                 |
+| **Sprint 7** | 30/12/2026  | 13/01/2027   | Métricas Prometheus + logs estruturados; testes de performance.        | `/metrics` endpoint, Grafana dashboard mock                |
+| **Sprint 8** | 14/01/2027  | 28/01/2027   | Testes de integração, QA final, documentação e lançamento beta.        | Release no staging, documentação técnica, plano de rollout |
 
 ### Linha do Tempo (Gantt)
+
 ```
 | Sprint | Jan | Feb | Mar |
 |--------|-----|-----|-----|
@@ -333,20 +340,23 @@ A execução segue ciclos ágeis (sprints) de 2 semanas, totalizando 8 sprints
 | 8      |     |     |     |
 ```
 
-## 4. Recursos Necessários  
+## 4. Recursos Necessários
+
 ### 4.1 Equipe Técnica
-| Papel | Responsabilidades | Horas/semana |
-|-------|-------------------|--------------|
-| **Product Owner (PO)** | Definir backlog, priorizar features, validar entregas. | 20h |
-| **Scrum Master** | Facilitar cerimônias ágeis, remover impedimentos. | 15h |
-| **Backend Engineer** (2) | API, job scheduler, modelo ML, cache. | 40h/semana cada |
-| **Frontend Engineer** (1) | Página única, temas, export PNG, geolocalização. | 30h |
-| **Data Scientist** (1) | Treinamento XGBoost, validação de modelos. | 20h |
-| **DevOps / SRE** (1) | Infraestrutura Docker/K8s, CI/CD, monitoramento. | 25h |
-| **QA Engineer** (1) | Testes unitários, integração, performance, acessibilidade. | 15h |
-| **Technical Writer** (0.5) | Documentação interna e externa. | 10h |
+
+| Papel                      | Responsabilidades                                          | Horas/semana    |
+| -------------------------- | ---------------------------------------------------------- | --------------- |
+| **Product Owner (PO)**     | Definir backlog, priorizar features, validar entregas.     | 20h             |
+| **Scrum Master**           | Facilitar cerimônias ágeis, remover impedimentos.          | 15h             |
+| **Backend Engineer** (2)   | API, job scheduler, modelo ML, cache.                      | 40h/semana cada |
+| **Frontend Engineer** (1)  | Página única, temas, export PNG, geolocalização.           | 30h             |
+| **Data Scientist** (1)     | Treinamento XGBoost, validação de modelos.                 | 20h             |
+| **DevOps / SRE** (1)       | Infraestrutura Docker/K8s, CI/CD, monitoramento.           | 25h             |
+| **QA Engineer** (1)        | Testes unitários, integração, performance, acessibilidade. | 15h             |
+| **Technical Writer** (0.5) | Documentação interna e externa.                            | 10h             |
 
 ### 4.2 Ferramentas & Licenças
+
 - **Infraestrutura Cloud**: AWS region `sa-east-1` – EC2 t3.medium, ECR, Elastic Container Service, RDS ElastiCache Redis.
 - **CI/CD**: GitHub Actions (free) + Docker Hub (public).
 - **Observabilidade**: Prometheus + Grafana (open source), Loki para logs.
@@ -355,91 +365,103 @@ A execução segue ciclos ágeis (sprints) de 2 semanas, totalizando 8 sprints
 - **Bibliotecas de Geolocalização**: `ipinfo.io` (gratuito) para IP lookup.
 
 ### 4.3 Infraestrutura de Rede
+
 - CDN via CloudFront para servir a página estática em cache global.
 - HTTPS via ACM (AWS Certificate Manager).
 - IAM roles restritos; secrets no AWS Secrets Manager.
 
-## 5. Orçamento  
-| Item | Custo Mensal (R$) | Duração (meses) | Total (R$) |
-|------|------------------|-----------------|------------|
-| **Infraestrutura Cloud** | 1 200,00 | 8 | 9 600,00 |
-| **Licenças de Software** | 300,00 | 8 | 2 400,00 |
-| **Equipe Técnica (salários)** | 70 000,00 | 8 | 560 000,00 |
-| **Despesas Operacionais** (domínio, backup, etc.) | 200,00 | 8 | 1 600,00 |
-| **Contingência 10%** | - | - | 56 400,00 |
-| **Total Geral** | | | **629 000,00** |
+## 5. Orçamento
 
-*Obs.: Salários são estimativas médias de mercado (Brasil).*
+| Item                                              | Custo Mensal (R$) | Duração (meses) | Total (R$)     |
+| ------------------------------------------------- | ----------------- | --------------- | -------------- |
+| **Infraestrutura Cloud**                          | 1 200,00          | 8               | 9 600,00       |
+| **Licenças de Software**                          | 300,00            | 8               | 2 400,00       |
+| **Equipe Técnica (salários)**                     | 70 000,00         | 8               | 560 000,00     |
+| **Despesas Operacionais** (domínio, backup, etc.) | 200,00            | 8               | 1 600,00       |
+| **Contingência 10%**                              | -                 | -               | 56 400,00      |
+| **Total Geral**                                   |                   |                 | **629 000,00** |
 
-## 6. Riscos  
-| ID | Descrição | Probabilidade | Impacto | Mitigação |
-|----|------------|--------------|---------|-----------|
-| R01 | Falha na API da Marinha do Brasil (maré) | Média | Alta | Implementar retries + fallback estático; cache de última versão válida. |
-| R02 | Dados meteorológicos fora de alcance (ex.: falta de previsão) | Baixa | Média | Usar fonte alternativa Open‑Meteo; validar consistência antes da inferência. |
-| R03 | Sobrecarga no Redis devido a picos de acesso matutino | Média | Alta | Escalar Redis via Auto Scaling; monitorar TTL. |
-| R04 | Modelo XGBoost não convergindo com poucos dados históricos | Baixa | Média | Realizar validação cruzada, usar regularização L2, fallback regra heurística. |
-| R05 | Incorreta interpretação de risco (falsos positivos) | Média | Alta | Testes A/B; monitorar métricas de engajamento e feedback dos usuários. |
-| R06 | Problemas de compliance LGPD na geolocalização opcional | Baixa | Média | Não armazenar IP, apenas usar para exibição instantânea; obter consentimento via modal. |
-| R07 | Falha de CI/CD impedindo deploy | Baixa | Alta | Pipelines idempotentes, rollback automático. |
+_Obs.: Salários são estimativas médias de mercado (Brasil)._
 
-## 7. Comunicação  
+## 6. Riscos
+
+| ID  | Descrição                                                     | Probabilidade | Impacto | Mitigação                                                                               |
+| --- | ------------------------------------------------------------- | ------------- | ------- | --------------------------------------------------------------------------------------- |
+| R01 | Falha na API da Marinha do Brasil (maré)                      | Média         | Alta    | Implementar retries + fallback estático; cache de última versão válida.                 |
+| R02 | Dados meteorológicos fora de alcance (ex.: falta de previsão) | Baixa         | Média   | Usar fonte alternativa Open‑Meteo; validar consistência antes da inferência.            |
+| R03 | Sobrecarga no Redis devido a picos de acesso matutino         | Média         | Alta    | Escalar Redis via Auto Scaling; monitorar TTL.                                          |
+| R04 | Modelo XGBoost não convergindo com poucos dados históricos    | Baixa         | Média   | Realizar validação cruzada, usar regularização L2, fallback regra heurística.           |
+| R05 | Incorreta interpretação de risco (falsos positivos)           | Média         | Alta    | Testes A/B; monitorar métricas de engajamento e feedback dos usuários.                  |
+| R06 | Problemas de compliance LGPD na geolocalização opcional       | Baixa         | Média   | Não armazenar IP, apenas usar para exibição instantânea; obter consentimento via modal. |
+| R07 | Falha de CI/CD impedindo deploy                               | Baixa         | Alta    | Pipelines idempotentes, rollback automático.                                            |
+
+## 7. Comunicação
+
 ### 7.1 Cadência de Reuniões
-- **Daily Stand‑up** (online) – 15 min.  
-- **Sprint Review** – ao fim de cada sprint (30 min).  
-- **Sprint Retrospective** – ao fim de cada sprint (45 min).  
+
+- **Daily Stand‑up** (online) – 15 min.
+- **Sprint Review** – ao fim de cada sprint (30 min).
+- **Sprint Retrospective** – ao fim de cada sprint (45 min).
 
 ### 7.2 Relatórios de Status
-- **Dashboard de Projeto** (Jira + Confluence) – atualização diária dos tickets.  
+
+- **Dashboard de Projeto** (Jira + Confluence) – atualização diária dos tickets.
 - **Email semanal** (para stakeholders chave: Prefeitura, ONG de mobilidade) – resumo das entregas e métricas.
 
 ### 7.3 Documentação Técnica
-- **Repositório GitHub** – README, CONTRIBUTING.md, docs/ folder.  
-- **Wiki Confluence** – arquitetura, decisões de design, instruções de deploy.  
 
-## 8. Qualidade  
-| Critério | Ferramenta / Processo | Meta |
-|----------|------------------------|------|
-| **Cobertura de testes unitários** | PyTest (backend), Jest (frontend) | ≥ 80 % |
-| **Teste de performance** | k6, Locust | 95 % das requisições < 1,5 s |
-| **Acessibilidade WCAG AA** | axe-core, Lighthouse | Passar todas as verificações |
-| **Revisão de código** | Pull Requests no GitHub + revisão obrigatória | 2 revisores por PR |
-| **Documentação** | Docstrings + Sphinx (Python), Storybook (React) | Atualizada antes do merge |
+- **Repositório GitHub** – README, CONTRIBUTING.md, docs/ folder.
+- **Wiki Confluence** – arquitetura, decisões de design, instruções de deploy.
 
-## 9. Stakeholders (Partes Interessadas)  
-| Nome / Cargo | Organização | Interesses / Expectativas |
-|--------------|-------------|---------------------------|
-| **Maria Silva – Coordenadora de Mobilidade Urbana** | Prefeitura do Recife | Redução de incidentes, dados públicos confiáveis |
-| **João Pereira – Gestor de Operações de Transporte** | Empresa de ônibus municipal | Integração opcional via webhook para ajuste de rotas |
-| **Ana Costa – Diretora de Tecnologia** | Governo Regional | Segurança, compliance LGPD, infraestrutura escalável |
-| **Pedro Almeida – Representante da Comunidade (Associação)** | Associação de Moradores do Bairro X | Transparência nas decisões, feedback em tempo real |
-| **Equipe Técnica FEH** | Desenvolvedores internos / freelancers | Entrega dentro do prazo, qualidade técnica |
-| **Usuários Finais** | Moradores e trabalhadores do Recife | Informação rápida, confiável, sem cadastro |
+## 8. Qualidade
 
-## 10. Gerenciamento de Mudanças  
+| Critério                          | Ferramenta / Processo                           | Meta                         |
+| --------------------------------- | ----------------------------------------------- | ---------------------------- |
+| **Cobertura de testes unitários** | PyTest (backend), Jest (frontend)               | ≥ 80 %                       |
+| **Teste de performance**          | k6, Locust                                      | 95 % das requisições < 1,5 s |
+| **Acessibilidade WCAG AA**        | axe-core, Lighthouse                            | Passar todas as verificações |
+| **Revisão de código**             | Pull Requests no GitHub + revisão obrigatória   | 2 revisores por PR           |
+| **Documentação**                  | Docstrings + Sphinx (Python), Storybook (React) | Atualizada antes do merge    |
+
+## 9. Stakeholders (Partes Interessadas)
+
+| Nome / Cargo                                                 | Organização                            | Interesses / Expectativas                            |
+| ------------------------------------------------------------ | -------------------------------------- | ---------------------------------------------------- |
+| **Maria Silva – Coordenadora de Mobilidade Urbana**          | Prefeitura do Recife                   | Redução de incidentes, dados públicos confiáveis     |
+| **João Pereira – Gestor de Operações de Transporte**         | Empresa de ônibus municipal            | Integração opcional via webhook para ajuste de rotas |
+| **Ana Costa – Diretora de Tecnologia**                       | Governo Regional                       | Segurança, compliance LGPD, infraestrutura escalável |
+| **Pedro Almeida – Representante da Comunidade (Associação)** | Associação de Moradores do Bairro X    | Transparência nas decisões, feedback em tempo real   |
+| **Equipe Técnica FEH**                                       | Desenvolvedores internos / freelancers | Entrega dentro do prazo, qualidade técnica           |
+| **Usuários Finais**                                          | Moradores e trabalhadores do Recife    | Informação rápida, confiável, sem cadastro           |
+
+## 10. Gerenciamento de Mudanças
+
 ### 10.1 Processo
-1. **Proposta de mudança (Change Request – CR)** enviada via Jira Ticket “CR-xxxx”.  
-2. **Avaliação Técnica** pelo Product Owner + Scrum Master: impacto no escopo, cronograma e orçamento.  
-3. **Aprovação**: Se aprovado, ticket é movido para backlog do sprint atual ou futuro; se não, notificação de rejeição com justificativa.  
-4. **Implementação**: Código desenvolvido em branch “feature/CR-xxxx”.  
-5. **Revisão e Merge**: Revisão obrigatória por 2 peers.  
+
+1. **Proposta de mudança (Change Request – CR)** enviada via Jira Ticket “CR-xxxx”.
+2. **Avaliação Técnica** pelo Product Owner + Scrum Master: impacto no escopo, cronograma e orçamento.
+3. **Aprovação**: Se aprovado, ticket é movido para backlog do sprint atual ou futuro; se não, notificação de rejeição com justificativa.
+4. **Implementação**: Código desenvolvido em branch “feature/CR-xxxx”.
+5. **Revisão e Merge**: Revisão obrigatória por 2 peers.
 6. **Deploy**: CI/CD executa build/teste; deploy para staging, QA, depois produção após aprovação de QA.
 
 ### 10.2 Controle de Versões
-- **Versionamento Semântico** (MAJOR.MINOR.PATCH).  
-- Tag oficial no GitHub ao cada release (`v1.0.0`, `v1.1.0` etc.).  
+
+- **Versionamento Semântico** (MAJOR.MINOR.PATCH).
+- Tag oficial no GitHub ao cada release (`v1.0.0`, `v1.1.0` etc.).
 
 ### 10.3 Comunicação de Mudanças
-- Atualização automática no changelog Markdown no repositório.  
-- Notificação por e‑mail aos stakeholders quando um CR é aprovado/implementado.  
 
----  
+- Atualização automática no changelog Markdown no repositório.
+- Notificação por e‑mail aos stakeholders quando um CR é aprovado/implementado.
+
+---
 
 > **Observação Final**: O plano acima foi elaborado para garantir entregas rápidas, confiáveis e de alto impacto social, respeitando as restrições de dados abertos e a necessidade de operar em infraestrutura brasileira com custo controlado. A equipe deve seguir rigorosamente o cronograma, os critérios de qualidade e o processo de mudanças para minimizar retrabalho e atrasos.
 
 ## Escopo do Projeto
 
 ### 1. Descrição do Projeto
-
 
 **Descrição**
 
@@ -462,7 +484,7 @@ O projeto "Fico em Casa Hoje?" (FEH) é uma aplicação web ultrassimplificada, 
 - Infraestrutura Docker/K8s hospedada na região brasileira (AWS/GCP);
 - Integração opcional de webhook para sistemas externos via POST;
 - Teste de carga, acessibilidade WCAG 2.1 AA e compatibilidade navegadores modernos.
-- 
+-
 
 **Fora do Escopo**
 
@@ -492,27 +514,29 @@ O projeto "Fico em Casa Hoje?" (FEH) é uma aplicação web ultrassimplificada, 
 
 ### Documento de Arquitetura do Sistema "Fico em Casa Hoje?"
 
-
 **Descrição**
 
 ## 1. Introdução
+
 O projeto **Fico em Casa Hoje? (FEH)** é uma aplicação web ultrassimplificada que fornece, sem cadastro e sem login, a decisão diária de **SIM** ou **NÃO** sobre se os cidadãos da Região Metropolitana do Recife devem permanecer em casa no início da manhã devido ao risco de ilhamento urbano. O documento descreve a arquitetura proposta, justificando cada escolha técnica, alinhada aos requisitos funcionais, não‑funcionais e restrições apresentadas.
 
 ## 2. Visão Geral da Arquitetura
+
 A solução segue um padrão **Microserviço + Serverless** híbrido, composto por três camadas principais: **Apresentação**, **Domínio** e **Infraestrutura**. A camada de apresentação hospeda a página única em CDN, enquanto os domínios de negócio são implementados como funções serverless (AWS Lambda) que consomem APIs públicas, executam o modelo XGBoost e interagem com Redis para cache.
 
-- **Front‑end**: SPA React hospedada no CloudFront + S3. 
-- **API Gateway**: Enfileira requisições HTTP, valida rate limits e autentica webhooks opcionalmente. 
-- **Lambda Functions**: `DataFetcher`, `RiskPredictor`, `RSSGenerator` e `StaticFallback`. 
-- **Redis ElastiCache**: Armazena a decisão diária (TTL 24 h). 
-- **S3 / CloudWatch Logs**: Guarda logs estruturados JSON, histórico de decisões por 30 dias. 
-- **Prometheus + Grafana**: Métricas expostas em `/metrics`. 
+- **Front‑end**: SPA React hospedada no CloudFront + S3.
+- **API Gateway**: Enfileira requisições HTTP, valida rate limits e autentica webhooks opcionalmente.
+- **Lambda Functions**: `DataFetcher`, `RiskPredictor`, `RSSGenerator` e `StaticFallback`.
+- **Redis ElastiCache**: Armazena a decisão diária (TTL 24 h).
+- **S3 / CloudWatch Logs**: Guarda logs estruturados JSON, histórico de decisões por 30 dias.
+- **Prometheus + Grafana**: Métricas expostas em `/metrics`.
 
 A comunicação interna utiliza REST sobre HTTPS com payloads JSON e Webhooks POST (opcional). A integração externa (APIs públicas) respeita limites via `Retry‑After` headers, backoff exponencial e circuit breaker.
 
 ## 3. Diagrama de Componentes
-1. **User Interface (React SPA)** – Servida por CloudFront/S3, consome `/api/decision`. 
-2. **API Gateway** – Endpoint único (`/api/*`) que roteia para Lambda apropriado, aplica throttling e captura logs. 
+
+1. **User Interface (React SPA)** – Servida por CloudFront/S3, consome `/api/decision`.
+2. **API Gateway** – Endpoint único (`/api/*`) que roteia para Lambda apropriado, aplica throttling e captura logs.
 3. **Lambda DataFetcher** – Busca dados de Open‑Meteo (chuva), Marinha do Brasil (maré) e CEMADEN/APAC (nível fluvial). Utiliza `httpx` async com timeouts 5s e retry policy.
 4. **Lambda RiskPredictor** – Recebe payload JSON, carrega modelo XGBoost serializado em S3, calcula risco, decide tema e salva no Redis (`feh:decision:{date}`).
 5. **Lambda RSSGenerator** – Executado por CloudWatch Events (05:30), lê decisão do Redis, gera XML RSS e grava em S3.
@@ -522,16 +546,19 @@ A comunicação interna utiliza REST sobre HTTPS com payloads JSON e Webhooks PO
 9. **CloudWatch / Prometheus** – Métricas de latência, erro, volume de chamadas.
 
 ## 4. Interface do Usuário (UI)
-*Descrição:* SPA React com abordagem mobile‑first, renderizando a decisão e justificativa em um layout minimalista. A transição de tema é gerenciada por CSS custom properties e animações CSS3 de 0.3s.
 
-*Tecnologias:* 
+_Descrição:_ SPA React com abordagem mobile‑first, renderizando a decisão e justificativa em um layout minimalista. A transição de tema é gerenciada por CSS custom properties e animações CSS3 de 0.3s.
+
+_Tecnologias:_
+
 - **React 18** (hooks, context) + **TypeScript**
 - **Tailwind CSS v3** (utility‑first, dark mode alternativo)
 - **html2canvas** para exportação PNG
 - **react-router-dom** (única rota `/`)
 - **Axios** para chamada à API de decisão.
 
-*Funcionalidades:* 
+_Funcionalidades:_
+
 1. Exibição instantânea da resposta (`SIM/NÃO`) em fonte grande 48 px.
 2. Tema dinâmico: azul neutro (Sair) vs vermelho/alaranjado (Ficar).
 3. Justificativa curta ≤90 caracteres.
@@ -541,28 +568,34 @@ A comunicação interna utiliza REST sobre HTTPS com payloads JSON e Webhooks PO
 7. Acessibilidade WCAG 2.1 AA: contraste 4.5:1, navegação por teclado, ARIA labels.
 
 ## 5. Controladores (Controllers)
-*Descrição:* Camada de controle em API Gateway + Lambda, responsável por receber HTTP requests, validar payloads, invocar serviços e montar respostas.
 
-*Tecnologias:* 
+_Descrição:_ Camada de controle em API Gateway + Lambda, responsável por receber HTTP requests, validar payloads, invocar serviços e montar respostas.
+
+_Tecnologias:_
+
 - **AWS API Gateway v2** (HTTP APIs) – roteamento, throttling 200 rps.
 - **Python 3.12** Lambdas com `FastAPI` para handlers leves.
 - **Pydantic** para validação de entrada/saída JSON.
 
-*Funcionalidades:* 
+_Funcionalidades:_
+
 1. `/api/decision` – GET: devolve JSON `{ decision, justification }`. Invoca `RiskPredictor` via cache.
 2. `/api/rss` – GET: proxy para bucket S3.
 3. `/api/webhook/notify` – POST opcional, valida token via Cognito Identity.
 4. Fallback 404 → chama `StaticFallback`.
 
 ## 6. Serviços (Services)
-*Descrição:* Camada de negócio encapsulada em Lambdas independentes que executam lógica específica.
 
-*Tecnologias:* 
+_Descrição:_ Camada de negócio encapsulada em Lambdas independentes que executam lógica específica.
+
+_Tecnologias:_
+
 - **Python 3.12** com `scikit-learn`, `xgboost`.
 - **Boto3** para acesso S3, Redis.
 - **httpx** async HTTP client.
 
-*Funcionalidades:* 
+_Funcionalidades:_
+
 1. **DataFetcherService** – Coleta dados das APIs externas, normaliza em dict.
 2. **RiskPredictionService** – Carrega modelo XGBoost (`model.pkl`), faz inferência, calcula risco percentagem, retorna decisão e justificativa.
 3. **CacheService** – Interface Redis wrapper; set/get TTL 86400.
@@ -570,20 +603,25 @@ A comunicação interna utiliza REST sobre HTTPS com payloads JSON e Webhooks PO
 5. **FallbackService** – Gera HTML estático de erro.
 
 ## 7. Banco de Dados (Database)
-*Descrição:* Armazenamento em Redis ElastiCache para alta performance e TTL automático; logs em S3; modelo XGBoost persistido em S3.
 
-*Tecnologias:* 
+_Descrição:_ Armazenamento em Redis ElastiCache para alta performance e TTL automático; logs em S3; modelo XGBoost persistido em S3.
+
+_Tecnologias:_
+
 - **Redis 6** – chave‑valor, TTL 24 h.
 - **Amazon S3** – buckets `feh-models`, `feh-logs`, `feh-rss`.
 - **CloudWatch Logs** – coleta logs estruturados JSON.
 
-*Funcionalidades:* 
+_Funcionalidades:_
+
 1. Armazenar decisão diária (`key: feh:decision:{date}`) com TTL.
 2. Persistir modelo e métricas de treino (pasta `feh-models`).
 3. Rotina de limpeza automática dos logs antigos via Lambda Scheduler.
 
 ## 8. Visão de Implantação
+
 A implantação segue **IaC** usando Terraform (AWS provider). Estratégia:
+
 1. **CI/CD Pipeline**: GitHub Actions → lint, test, build Docker image (Lambda layers), push para ECR.
 2. **Deployment**: CloudFormation stack ou Terraform module atualiza Lambdas e API Gateway.
 3. **Canary Rollout**: 10% traffic → monitor métricas → roll‑back automático em caso de erro >5%.
@@ -594,6 +632,7 @@ A implantação segue **IaC** usando Terraform (AWS provider). Estratégia:
 Estratégia de escalabilidade horizontal: Lambda auto‑scaling (concurrency 1000), API Gateway throttling, CloudFront caching 1h.
 
 ## Decisões Arquiteturais Relevantes
+
 - **Serverless vs. VM**: Escolha Lambda para redução de custos operacionais e escala automática; mitigado risco de cold start via provisioned concurrency 50.
 - **Redis como cache**: Evita chamadas repetidas a APIs externas, garante resposta <1s.
 - **S3 para estático + logs**: Custo baixo e durabilidade garantida.
@@ -607,7 +646,6 @@ Estratégia de escalabilidade horizontal: Lambda auto‑scaling (concurrency 100
 Este documento fornece a base para implementação detalhada, garantindo que todos os requisitos sejam atendidos de forma segura, escalável e de alta disponibilidade.
 
 **Componentes**
-
 
 #### User Interface (React SPA)
 
@@ -679,7 +717,6 @@ Página única que exibe a decisão do dia (SIM ou NÃO) e justificativa curta, 
 {"features":[{"name":"Exibir Decisão do Dia","scenarios":[{"title":"Decisão SIM exibida corretamente com tema azul neutro","given":["Usuário acessa a página sem parâmetros de consulta"],"when":["A API interna retorna decisão 'SIM' e justificativa curta"],"then":["Página exibe texto 'SIM' em fonte 48px centralizado","Tema da página tem cor base #3498db (azul neutro)","Transição CSS de 0.3s ocorre ao carregar a página"]},{"title":"Decisão NÃO exibida corretamente com tema vermelho/laranja","given":["Usuário acessa a página sem parâmetros"],"when":["A API interna retorna decisão 'NÃO' e justificativa curta"],"then":["Página exibe texto 'NÃO' em fonte 48px centralizado","Tema da página tem cor base #e67e22 (laranja) ou #c0392b (vermelho)","Transição CSS de 0.3s ocorre ao carregar a página"]},{"title":"Justificativa curta exibida abaixo da decisão","given":["A API retorna justificativa 'Evite sair para evitar risco']"],"when":["Página renderiza decisão"],"then":["Texto abaixo do título tem tamanho 18px e não excede 90 caracteres","Centralizado horizontalmente"]},{"title":"Botão Imprimir gera PNG via html2canvas","given":["Usuário clica no botão Imprimir"],"when":["Script html2canvas captura o DOM da página"],"then":["Gera arquivo PNG de 800x600 px contendo a decisão e justificativa","Inicia download automático com nome 'decisao-dia.png'"]},{"title":"Ícone RSS redireciona para /rss","given":["Usuário clica no ícone RSS"],"when":["Evento click é disparado"],"then":["Navega para URL '/rss' sem recarregar a página"]},{"title":"Geolocalização opcional via IP com modal de consentimento","given":["A API de geolocalização por IP falha ou usuário não aceita"],"when":["Usuário clica no botão 'Localizar-me'"],"then":["Exibe modal pedindo permissão para usar IP","Se aceito, faz chamada à API e exibe mensagem 'Localizado em São Paulo'"]},{"title":"Fallback estático quando APIs externas falham","given":["API de decisão do dia está indisponível"],"when":["Página carrega"],"then":["Exibe decisão padrão 'NÃO' com justificativa curta 'Falha na API'"]}]}]}
 
 **User Stories**
-
 
 #### US-03: Tema dinâmico baseado na decisão
 
@@ -813,7 +850,6 @@ Página que apresenta o último item do feed RSS gerado diariamente, útil para 
 
 **User Stories**
 
-
 #### Estilo minimalista branco com ícone RSS
 
 Como usuário que aprecia design limpo, desejo que a página siga um estilo minimalista com fundo branco e o ícone RSS visível.
@@ -912,7 +948,6 @@ Página interna para monitoramento do backend, exibindo métricas Prometheus e l
 {"features":[{"name":"Dashboard de Monitoramento","scenarios":[{"title":"Exibir métricas de latência das chamadas externas","given":["O sistema está em produção e o endpoint /dashboard está acessível via HTTPS"],"when":["Um usuário autenticado com token JWT válido navega para a URL /dashboard"],"then":["A página carrega em menos que 2 segundos","Os gráficos de latência mostram valores reais dos últimos 24h para Open‑Meteo, Marinha e CEMADEN","Cada gráfico exibe título, eixo X (tempo) e eixo Y (latência ms)","Há legendas claras indicando cada fonte"]},{"title":"Mostrar taxa de sucesso vs falha por fonte","given":["O sistema coleta métricas Prometheus em tempo real"],"when":["O usuário acessa a seção 'Taxa de Sucesso' no dashboard"],"then":["Um gráfico de barras apresenta, para cada fonte externa (Open‑Meteo, Marinha, CEMADEN), a porcentagem de requisições bem-sucedidas e falhas nas últimas 24h","A legenda indica cores verde (sucesso) e vermelho (falha)","Os valores são atualizados automaticamente a cada minuto"]},{"title":"Exibir contagem diária de requisições API /decision","given":["O endpoint /decision está sendo chamado por usuários externos"],"when":["Um usuário acessa a aba 'Requisições diárias' no dashboard"],"then":["Um gráfico de linha mostra o número total de chamadas ao /decision para cada dia das últimas 7 semanas","O eixo X exibe datas, o eixo Y exibe contagem","Há um tooltip que revela o valor exato ao passar o mouse"]},{"title":"Filtrar logs estruturados por data/hora e nível","given":["Logs são armazenados em formato JSON no Loki"],"when":["Um usuário entra na visualização de logs e define filtro 'data = 2026‑09‑15' e 'nível = ERROR'"],"then":["A tabela exibe apenas registros correspondentes ao dia e nível selecionado","Cada linha mostra timestamp, nível, mensagem e campo adicional 'service'"]},{"title":"Verificar autenticação JWT na API de dashboard","given":["Um token JWT inválido ou expirado é usado para acessar /dashboard"],"when":["O usuário tenta navegar para a página"],"then":["O servidor responde com status 401 Unauthorized e corpo JSON explicando o motivo"]}]}]}
 
 **User Stories**
-
 
 #### Exibir métricas de latência das chamadas externas
 
@@ -1014,7 +1049,6 @@ Prompt que solicita consentimento para usar IP do usuário a fim de exibir vias 
 
 **User Stories**
 
-
 #### Exibir Modal de Consentimento para Vias Críticas Próximas
 
 Como usuário que visita a página principal do aplicativo, quero ver um modal perguntando se desejo exibir vias críticas próximas, para que eu possa decidir compartilhar meu IP.
@@ -1102,7 +1136,6 @@ Página exibida quando qualquer fonte externa não pode ser alcançada, informan
 
 **User Stories**
 
-
 #### US-1: Exibir página de erro quando a API externa está indisponível
 
 Como usuário que tenta acessar dados da aplicação, quero ver uma mensagem clara indicando que os dados não puderam ser carregados, para que eu saiba que o problema não é meu e possa tentar novamente mais tarde.
@@ -1150,7 +1183,7 @@ Como QA, quero que haja testes automatizados que garantam a correta exibição e
 
 _Critérios de Aceite_
 
-- Pelo menos 3 testes unitários para o componente ErrorPage (ex.: renderização do texto, verificação de estilos). 
+- Pelo menos 3 testes unitários para o componente ErrorPage (ex.: renderização do texto, verificação de estilos).
 - Um teste de integração que simula uma falha na API externa e verifica se a página de erro é exibida.
 - Um teste E2E que clica no botão "Tentar Novamente" e assegura que a página recarregue sem erros.
 
@@ -1206,7 +1239,6 @@ Funcionalidade que captura a tela da decisão atual e gera uma imagem PNG para d
 {"features":[{"name":"Captura da tela da decisão atual","scenarios":[{"title":"Cenário: Gerar imagem PNG de alta qualidade com sucesso","given":["O usuário está na página de decisão que deseja capturar","html2canvas está carregado corretamente no navegador"],"when":["O usuário clica no botão 'Download'"],"then":["A função html2canvas é chamada com escala 1.5","Um objeto canvas contendo a captura da tela é criado","Uma imagem PNG é gerada a partir do canvas","O nome padrão do arquivo segue o formato decisão-recife-<data>.png onde <data> está no formato DDMMYYYY"]},{"title":"Cenário: Falha na geração de imagem devido à falha da biblioteca html2canvas","given":["O usuário está na página de decisão que deseja capturar","html2canvas não pode ser carregado ou lança exceção"],"when":["O usuário clica no botão 'Download'"],"then":["A aplicação captura a exceção lançada pela biblioteca","Exibe uma mensagem ao usuário: \"Não foi possível gerar imagem.\"","Nenhum arquivo de download é iniciado"]},{"title":"Cenário: Suporte a navegadores modernos (Chrome, Firefox, Edge) na geração da imagem","given":["O usuário está utilizando Chrome 120 ou superior"],"when":["O usuário clica no botão 'Download'"],"then":["A captura da tela é realizada com sucesso e o arquivo PNG é baixado"]},{"title":"Cenário: Navegador sem suporte a html2canvas (ex.: Safari antigo)","given":["O usuário está utilizando um navegador que não suporta html2canvas"],"when":["O usuário clica no botão 'Download'"],"then":["A aplicação exibe mensagem de erro \"Não foi possível gerar imagem.\" e sugere atualizar o navegador"]}]}]}
 
 **User Stories**
-
 
 #### US-2: Tratar falhas ao gerar imagem por falta da biblioteca
 

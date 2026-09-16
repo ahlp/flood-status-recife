@@ -1,4 +1,4 @@
-export type DecisionValue = 'SIM' | 'NÃO';
+export type DecisionValue = "SIM" | "NÃO";
 
 export interface WeatherData {
   rainPast6h: number;
@@ -20,7 +20,7 @@ export interface RiverData {
   level: number;
   alertThreshold: number;
   overflowThreshold: number;
-  status: 'NORMAL' | 'ATENÇÃO' | 'ALERTA' | 'TRANSBORDAMENTO';
+  status: "NORMAL" | "ATENÇÃO" | "ALERTA" | "TRANSBORDAMENTO";
 }
 
 export interface CriticalRoad {
@@ -30,7 +30,7 @@ export interface CriticalRoad {
   city: string;
   lat: number;
   lng: number;
-  floodRiskLevel: 'ALTO' | 'CRÍTICO' | 'MÉDIO';
+  floodRiskLevel: "ALTO" | "CRÍTICO" | "MÉDIO";
   description: string;
 }
 
@@ -83,7 +83,7 @@ export interface DailyDecisionPoint {
 
 export interface LogEntry {
   timestamp: string;
-  level: 'info' | 'warn' | 'error';
+  level: "info" | "warn" | "error";
   message: string;
   service: string;
   metadata?: Record<string, unknown>;

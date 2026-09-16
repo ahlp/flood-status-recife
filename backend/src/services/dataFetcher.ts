@@ -1,11 +1,16 @@
-import axios from 'axios';
-import { WeatherData, TideData, RiverData, CriticalRoad } from '../types/index.js';
-import { logger } from '../utils/logger.js';
-import { recordExternalApiCall } from '../utils/metrics.js';
-import { withRetry } from '../utils/retry.js';
-import { createRequire } from 'module';
+import axios from "axios";
+import {
+  WeatherData,
+  TideData,
+  RiverData,
+  CriticalRoad,
+} from "../types/index.js";
+import { logger } from "../utils/logger.js";
+import { recordExternalApiCall } from "../utils/metrics.js";
+import { withRetry } from "../utils/retry.js";
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const criticalRoadsData: CriticalRoad[] = require('../data/criticalRoads.json');
+const criticalRoadsData: CriticalRoad[] = require("../data/criticalRoads.json");
 
 export class DataFetcherService {
   private static readonly RECIFE_LAT = -8.0578;
@@ -18,14 +23,17 @@ export class DataFetcherService {
   public async fetchWeatherData(): Promise<WeatherData> {
     const start = Date.now();
     try {
-      const data = await withRetry(async () => {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${DataFetcherService.RECIFE_LAT}&longitude=${DataFetcherService.RECIFE_LNG}&hourly=precipitation,precipitation_probability&timezone=America%2FRecife&forecast_days=2`;
-        const response = await axios.get(url, { timeout: 5000 });
-        return response.data;
-      }, { serviceName: 'Open-Meteo' });
+      const data = await withRetry(
+        async () => {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${DataFetcherService.RECIFE_LAT}&longitude=${DataFetcherService.RECIFE_LNG}&hourly=precipitation,precipitation_probability&timezone=America%2FRecife&forecast_days=2`;
+          const response = await axios.get(url, { timeout: 5000 });
+          return response.data;
+        },
+        { serviceName: "Open-Meteo" },
+      );
 
       const durationMs = Date.now() - start;
-      recordExternalApiCall('open-meteo', durationMs, true);
+      recordExternalApiCall("open-meteo", durationMs, true);
 
       // Processar horas matinais da previsão
       const hourly = data.hourly || {};
@@ -60,19 +68,19 @@ export class DataFetcherService {
         rainPast6h: Number(rainPast6h.toFixed(1)),
         rainForecastMorning: Number(rainForecastMorning.toFixed(1)),
         rainProbability: maxProb || 40,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       const durationMs = Date.now() - start;
-      recordExternalApiCall('open-meteo', durationMs, false);
+      recordExternalApiCall("open-meteo", durationMs, false);
       logger.error(`Erro ao consultar Open-Meteo: ${(error as Error).message}`);
-      
+
       // Fallback com estimativa segura para não interromper totalmente a inferência
       return {
         rainPast6h: 12.5,
         rainForecastMorning: 18.0,
         rainProbability: 60,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -85,42 +93,51 @@ export class DataFetcherService {
     const start = Date.now();
     try {
       // Simulação / Scraping resiliente da Tábua da Marinha
-      const result = await withRetry(async () => {
-        // Cálculo astronômico harmônico aproximado da maré no Porto do Recife
-        const now = new Date();
-        const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-        
-        // Variação de maré entre 1.4m e 2.4m
-        const lunarPhase = (dayOfYear % 29.5) / 29.5;
-        const springTideFactor = Math.abs(Math.sin(lunarPhase * 2 * Math.PI)); // Sizígia vs Quadratura
-        const peakHeight = Number((1.5 + springTideFactor * 0.9).toFixed(2)); // 1.5m a 2.4m
-        
-        // Horário do pico de preamar matutino desloca ~50min por dia
-        const morningHour = 6 + Math.floor((dayOfYear * 0.8) % 4); // 06h a 09h
-        const morningMin = Math.floor((dayOfYear * 13) % 60);
-        const peakTime = `${String(morningHour).padStart(2, '0')}:${String(morningMin).padStart(2, '0')}`;
+      const result = await withRetry(
+        async () => {
+          // Cálculo astronômico harmônico aproximado da maré no Porto do Recife
+          const now = new Date();
+          const dayOfYear = Math.floor(
+            (now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) /
+              (1000 * 60 * 60 * 24),
+          );
 
-        return {
-          peakTime,
-          peakHeight,
-          isHighTideMorning: morningHour >= 6 && morningHour <= 10 && peakHeight >= 1.9,
-          timestamp: new Date().toISOString()
-        };
-      }, { serviceName: 'Marinha do Brasil (Tábua de Marés)' });
+          // Variação de maré entre 1.4m e 2.4m
+          const lunarPhase = (dayOfYear % 29.5) / 29.5;
+          const springTideFactor = Math.abs(Math.sin(lunarPhase * 2 * Math.PI)); // Sizígia vs Quadratura
+          const peakHeight = Number((1.5 + springTideFactor * 0.9).toFixed(2)); // 1.5m a 2.4m
+
+          // Horário do pico de preamar matutino desloca ~50min por dia
+          const morningHour = 6 + Math.floor((dayOfYear * 0.8) % 4); // 06h a 09h
+          const morningMin = Math.floor((dayOfYear * 13) % 60);
+          const peakTime = `${String(morningHour).padStart(2, "0")}:${String(morningMin).padStart(2, "0")}`;
+
+          return {
+            peakTime,
+            peakHeight,
+            isHighTideMorning:
+              morningHour >= 6 && morningHour <= 10 && peakHeight >= 1.9,
+            timestamp: new Date().toISOString(),
+          };
+        },
+        { serviceName: "Marinha do Brasil (Tábua de Marés)" },
+      );
 
       const durationMs = Date.now() - start;
-      recordExternalApiCall('marinha', durationMs, true);
+      recordExternalApiCall("marinha", durationMs, true);
       return result;
     } catch (error) {
       const durationMs = Date.now() - start;
-      recordExternalApiCall('marinha', durationMs, false);
-      logger.error(`Erro ao consultar Tábua de Marés: ${(error as Error).message}`);
+      recordExternalApiCall("marinha", durationMs, false);
+      logger.error(
+        `Erro ao consultar Tábua de Marés: ${(error as Error).message}`,
+      );
 
       return {
-        peakTime: '07:30',
+        peakTime: "07:30",
         peakHeight: 2.1,
         isHighTideMorning: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -131,55 +148,60 @@ export class DataFetcherService {
   public async fetchRiverData(): Promise<RiverData[]> {
     const start = Date.now();
     try {
-      const rivers = await withRetry(async () => {
-        // Três estações fluviométricas críticas do Recife
-        const stations: RiverData[] = [
-          {
-            name: 'Rio Capibaribe',
-            station: 'Estação Capibaribe - Rua da Aurora / Madalena',
-            level: 3.10,
-            alertThreshold: 4.20,
-            overflowThreshold: 5.00,
-            status: 'NORMAL'
-          },
-          {
-            name: 'Rio Tejipió',
-            station: 'Estação Tejipió - Afogados / Imbiribeira',
-            level: 2.30,
-            alertThreshold: 2.50,
-            overflowThreshold: 3.20,
-            status: 'ATENÇÃO'
-          },
-          {
-            name: 'Rio Beberibe',
-            station: 'Estação Beberibe - Peixinhos / Campina do Barreto',
-            level: 1.85,
-            alertThreshold: 2.30,
-            overflowThreshold: 3.00,
-            status: 'NORMAL'
-          }
-        ];
+      const rivers = await withRetry(
+        async () => {
+          // Três estações fluviométricas críticas do Recife
+          const stations: RiverData[] = [
+            {
+              name: "Rio Capibaribe",
+              station: "Estação Capibaribe - Rua da Aurora / Madalena",
+              level: 3.1,
+              alertThreshold: 4.2,
+              overflowThreshold: 5.0,
+              status: "NORMAL",
+            },
+            {
+              name: "Rio Tejipió",
+              station: "Estação Tejipió - Afogados / Imbiribeira",
+              level: 2.3,
+              alertThreshold: 2.5,
+              overflowThreshold: 3.2,
+              status: "ATENÇÃO",
+            },
+            {
+              name: "Rio Beberibe",
+              station: "Estação Beberibe - Peixinhos / Campina do Barreto",
+              level: 1.85,
+              alertThreshold: 2.3,
+              overflowThreshold: 3.0,
+              status: "NORMAL",
+            },
+          ];
 
-        return stations;
-      }, { serviceName: 'CEMADEN / APAC' });
+          return stations;
+        },
+        { serviceName: "CEMADEN / APAC" },
+      );
 
       const durationMs = Date.now() - start;
-      recordExternalApiCall('cemaden', durationMs, true);
+      recordExternalApiCall("cemaden", durationMs, true);
       return rivers;
     } catch (error) {
       const durationMs = Date.now() - start;
-      recordExternalApiCall('cemaden', durationMs, false);
-      logger.error(`Erro ao consultar CEMADEN/APAC: ${(error as Error).message}`);
+      recordExternalApiCall("cemaden", durationMs, false);
+      logger.error(
+        `Erro ao consultar CEMADEN/APAC: ${(error as Error).message}`,
+      );
 
       return [
         {
-          name: 'Rio Capibaribe',
-          station: 'Estação Central',
+          name: "Rio Capibaribe",
+          station: "Estação Central",
           level: 3.0,
           alertThreshold: 4.2,
           overflowThreshold: 5.0,
-          status: 'NORMAL'
-        }
+          status: "NORMAL",
+        },
       ];
     }
   }
