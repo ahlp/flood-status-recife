@@ -165,8 +165,8 @@ O sistema utiliza exclusivamente bases públicas e gratuitas sem custos de dados
 - [x] **Acessibilidade WCAG 2.1 AA & Testes do Frontend** — Validação de contraste mínimo 4.5:1, foco visível, navegação por teclado e testes com Vitest/Testing Library. (Status: 🟢 Concluído)
 
 #### Fase 4: Integração, Docker e Validação Final
-- [ ] **Dockerização Completa** — Dockerfile multi-stage para backend e frontend, além de `docker-compose.yml` integrado com Redis. (Status: ⚪ Pendente)
-- [ ] **Validação E2E e Lançamento** — Verificação completa de todos os fluxos BDD descritos no DECK_BRIEFING. (Status: ⚪ Pendente)
+- [x] **Dockerização Completa** — Dockerfile multi-stage para backend e frontend, além de `docker-compose.yml` integrado com Redis. (Status: 🟢 Concluído)
+- [x] **Validação E2E e Lançamento** — Verificação completa de todos os fluxos BDD descritos no DECK_BRIEFING. (Status: 🟢 Concluído)
 
 ---
 
