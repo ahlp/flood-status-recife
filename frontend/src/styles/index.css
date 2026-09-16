@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-bg: #3498db;
+    --primary-text: #ffffff;
+    --card-bg: #ffffff;
+    --accent-color: #2980b9;
+    --text-contrast: #0f172a;
+  }
+
+  body.theme-alert {
+    --primary-bg: #ff4d00;
+    --primary-text: #ffffff;
+    --card-bg: #ffffff;
+    --accent-color: #c0392b;
+    --text-contrast: #450a0a;
+  }
+
+  body.theme-neutral {
+    --primary-bg: #3498db;
+    --primary-text: #ffffff;
+    --card-bg: #ffffff;
+    --accent-color: #2980b9;
+    --text-contrast: #0f172a;
+  }
+
+  body.theme-fallback {
+    --primary-bg: #f5f5f5;
+    --primary-text: #1e293b;
+    --card-bg: #ffffff;
+    --accent-color: #475569;
+    --text-contrast: #0f172a;
+  }
+}
+
+/* Transição suave universal para mudança de tema (RF-06 / US-03) */
+body, .theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Suporte à acessibilidade de foco */
+*:focus-visible {
+  outline: 3px solid #0284c7;
+  outline-offset: 2px;
+}

@@ -155,14 +155,14 @@ O sistema utiliza exclusivamente bases públicas e gratuitas sem custos de dados
 - [x] **Testes Automatizados do Backend** — Testes unitários e de integração com cobertura para fetchers, risk engine, cache e rotas da API. (Status: 🟢 Concluído)
 
 #### Fase 3: Frontend (React + Vite + Tailwind CSS)
-- [ ] **Configuração da Base do Frontend** — Setup Vite, React 18, TypeScript, Tailwind CSS, Lucide React e estrutura de rotas. (Status: ⚪ Pendente)
-- [ ] **Componente Principal de Decisão e Tema Dinâmico** — Renderização da decisão em 48px+, temas reativos (Alerta Laranja/Vermelho vs. Neutro/Azul) com transição de 0.3s. (Status: ⚪ Pendente)
-- [ ] **Justificativa Contextual e Fallback Estático** — Exibição sucinta da justificativa e tela amigável de erro de dados externos com botão "Tentar Novamente". (Status: ⚪ Pendente)
-- [ ] **Exportação PNG em Alta Resolução** — Botão "Imprimir" integrado com html2canvas (escala 1.5) e download com nome `decisao-recife-DDMMYYYY.png`. (Status: ⚪ Pendente)
-- [ ] **Modal de Geolocalização por IP** — Prompt com consentimento, integração com IP lookup, persistência em localStorage (30 dias) e exibição da via crítica mais próxima. (Status: ⚪ Pendente)
-- [ ] **Página do Feed RSS (`/rss`)** — Visualização minimalista do último item, link seguro em nova aba, snippet da justificativa (200-400 chars) e botão "Download RSS". (Status: ⚪ Pendente)
-- [ ] **Dashboard de Métricas & Monitoramento (`/dashboard`)** — Interface interna com autenticação JWT, gráficos de latência por fonte, taxa de sucesso/falha, volume de requisições e visualizador de logs com filtros. (Status: ⚪ Pendente)
-- [ ] **Acessibilidade WCAG 2.1 AA & Testes do Frontend** — Validação de contraste mínimo 4.5:1, foco visível, navegação por teclado e testes com Vitest/Testing Library. (Status: ⚪ Pendente)
+- [x] **Configuração da Base do Frontend** — Setup Vite, React 18, TypeScript, Tailwind CSS, Lucide React e estrutura de rotas. (Status: 🟢 Concluído)
+- [x] **Componente Principal de Decisão e Tema Dinâmico** — Renderização da decisão em 48px+, temas reativos (Alerta Laranja/Vermelho vs. Neutro/Azul) com transição de 0.3s. (Status: 🟢 Concluído)
+- [x] **Justificativa Contextual e Fallback Estático** — Exibição sucinta da justificativa e tela amigável de erro de dados externos com botão "Tentar Novamente". (Status: 🟢 Concluído)
+- [x] **Exportação PNG em Alta Resolução** — Botão "Imprimir" integrado com html2canvas (escala 1.5) e download com nome `decisao-recife-DDMMYYYY.png`. (Status: 🟢 Concluído)
+- [x] **Modal de Geolocalização por IP** — Prompt com consentimento, integração com IP lookup, persistência em localStorage (30 dias) e exibição da via crítica mais próxima. (Status: 🟢 Concluído)
+- [x] **Página do Feed RSS (`/rss`)** — Visualização minimalista do último item, link seguro em nova aba, snippet da justificativa (200-400 chars) e botão "Download RSS". (Status: 🟢 Concluído)
+- [x] **Dashboard de Métricas & Monitoramento (`/dashboard`)** — Interface interna com autenticação JWT, gráficos de latência por fonte, taxa de sucesso/falha, volume de requisições e visualizador de logs com filtros. (Status: 🟢 Concluído)
+- [x] **Acessibilidade WCAG 2.1 AA & Testes do Frontend** — Validação de contraste mínimo 4.5:1, foco visível, navegação por teclado e testes com Vitest/Testing Library. (Status: 🟢 Concluído)
 
 #### Fase 4: Integração, Docker e Validação Final
 - [ ] **Dockerização Completa** — Dockerfile multi-stage para backend e frontend, além de `docker-compose.yml` integrado com Redis. (Status: ⚪ Pendente)
