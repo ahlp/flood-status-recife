@@ -1,0 +1,82 @@
+[
+  {
+    "id": "agamenon-magalhaes",
+    "name": "Av. Governador Agamenon Magalhães",
+    "neighborhood": "Derby / Espinheiro / Santo Amaro",
+    "city": "Recife",
+    "lat": -8.0512,
+    "lng": -34.8988,
+    "floodRiskLevel": "CRÍTICO",
+    "description": "Canal central extravasa durante alinhamento de pico de maré alta (>2.0m) e chuva intensa (>30mm)."
+  },
+  {
+    "id": "mascarenhas-de-morais",
+    "name": "Av. Marechal Mascarenhas de Morais",
+    "neighborhood": "Imbiribeira",
+    "city": "Recife",
+    "lat": -8.1065,
+    "lng": -34.9142,
+    "floodRiskLevel": "CRÍTICO",
+    "description": "Trechos próximos à Lagoa do Araçá e Aeroporto com histórico severo de retenção de água pluvial."
+  },
+  {
+    "id": "segunda-perimetral",
+    "name": "II Perimetral Metropolitana (Av. Pres. Kennedy)",
+    "neighborhood": "Peixinhos / Olinda",
+    "city": "Olinda",
+    "lat": -8.0125,
+    "lng": -34.8763,
+    "floodRiskLevel": "CRÍTICO",
+    "description": "Corredor viário de ligação com Olinda com pontos crônicos de alagamento na bacia do Rio Beberibe."
+  },
+  {
+    "id": "cruz-cabuga",
+    "name": "Av. Cruz Cabugá",
+    "neighborhood": "Santo Amaro",
+    "city": "Recife",
+    "lat": -8.0468,
+    "lng": -34.8779,
+    "floodRiskLevel": "ALTO",
+    "description": "Ponto crítico de escoamento no centro, bloqueando o acesso à zona norte e Olinda."
+  },
+  {
+    "id": "domingos-ferreira",
+    "name": "Av. Engenheiro Domingos Ferreira",
+    "neighborhood": "Boa Viagem",
+    "city": "Recife",
+    "lat": -8.1189,
+    "lng": -34.8974,
+    "floodRiskLevel": "ALTO",
+    "description": "Acúmulo de água nos cruzamentos com as ruas Bruno Veloso e Ribeiro de Brito durante preamar."
+  },
+  {
+    "id": "caxanga",
+    "name": "Av. Caxangá",
+    "neighborhood": "Caxangá / Madalena",
+    "city": "Recife",
+    "lat": -8.0416,
+    "lng": -34.9398,
+    "floodRiskLevel": "ALTO",
+    "description": "Alagamentos sob o Viaduto da Caxangá e proximidades da bacia do Rio Capibaribe."
+  },
+  {
+    "id": "estrada-dos-remedios",
+    "name": "Estrada dos Remédios",
+    "neighborhood": "Afogados",
+    "city": "Recife",
+    "lat": -8.0772,
+    "lng": -34.9085,
+    "floodRiskLevel": "CRÍTICO",
+    "description": "Bacia do Rio Tejipió; alagamento rápido impedindo circulação entre Zonas Oeste e Sul."
+  },
+  {
+    "id": "sul-recife",
+    "name": "Av. Sul Governador Cid Sampaio",
+    "neighborhood": "São José / Cabanga",
+    "city": "Recife",
+    "lat": -8.0743,
+    "lng": -34.8912,
+    "floodRiskLevel": "ALTO",
+    "description": "Ligação com o Viaduto Capitão Temudo intransitável em maré cheia."
+  }
+]
