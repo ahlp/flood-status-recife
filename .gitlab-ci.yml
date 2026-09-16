@@ -1,0 +1,83 @@
+image: node:22-alpine
+
+stages:
+  - validate
+  - test
+  - build
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+cache:
+  key:
+    files:
+      - package-lock.json
+      - backend/package-lock.json
+      - frontend/package-lock.json
+  paths:
+    - .npm/
+    - node_modules/
+    - backend/node_modules/
+    - frontend/node_modules/
+
+# 1. Validação do OpenSpec
+openspec_check:
+  stage: validate
+  before_script:
+    - npm ci
+  script:
+    - npm run validate:openspec
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# 2. Verificação de Formatação (Prettier)
+format_check:
+  stage: validate
+  before_script:
+    - npm ci
+  script:
+    - npm run format:check
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# 3. Testes Automatizados do Backend
+test_backend:
+  stage: test
+  before_script:
+    - cd backend && npm ci
+  script:
+    - npm test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# 4. Testes Automatizados do Frontend
+test_frontend:
+  stage: test
+  before_script:
+    - cd frontend && npm ci
+  script:
+    - npm test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# 5. Build dos Pacotes (Backend + Frontend)
+build_application:
+  stage: build
+  before_script:
+    - npm ci
+    - cd backend && npm ci && cd ..
+    - cd frontend && npm ci && cd ..
+  script:
+    - npm run build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - backend/dist/
+      - frontend/dist/
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
