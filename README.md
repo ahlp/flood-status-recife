@@ -146,7 +146,7 @@ O sistema utiliza exclusivamente bases públicas e gratuitas sem custos de dados
 
 #### Fase 2: Backend (Node.js + Express + TypeScript)
 - [x] **Configuração da Base do Backend** — Setup do projeto TypeScript, Express, middlewares essenciais (CORS, Helmet, Rate Limiter, Winston logger) e scripts. (Status: 🟢 Concluído)
-- [ ] **Módulo Coletor de Dados Abertos (`DataFetcherService`)** — Integração com Open-Meteo, Tábua de Marés, CEMADEN/APAC e catálogo de vias críticas com política de retry e resiliência. (Status: ⚪ Pendente)
+- [x] **Módulo Coletor de Dados Abertos (`DataFetcherService`)** — Integração com Open-Meteo, Tábua de Marés, CEMADEN/APAC e catálogo de vias críticas com política de retry e resiliência. (Status: 🟢 Concluído)
 - [ ] **Motor de Decisão e Inferência (`RiskEngineService`)** — Algoritmo preditivo de cálculo de índice de risco, corte em 65% e gerador de justificativa contextual (≤ 90 caracteres). (Status: ⚪ Pendente)
 - [ ] **Camada de Cache e Scheduler (`CacheService` & `CronJob`)** — Persistência Redis com TTL 24h (com fallback em memória) e rotina diária às 05h30. (Status: ⚪ Pendente)
 - [ ] **Serviço de RSS e Endpoints Públicos** — Geração de XML RSS 2.0, download e rotas `/api/decision`, `/api/rss`, `/api/rss/latest`. (Status: ⚪ Pendente)

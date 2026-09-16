@@ -1,6 +1,7 @@
 {
   "name": "flood-status-recife-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend API para Fico em Casa Hoje? (Flood Status Recife)",
   "main": "dist/server.js",
   "scripts": {
