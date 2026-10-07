@@ -60,7 +60,11 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({
           className="text-lg sm:text-xl font-medium text-white/95 max-w-xl mx-auto leading-relaxed px-4 py-2 bg-black/10 rounded-xl backdrop-blur-sm shadow-inner"
           title={decision.justification}
         >
-          {decision.justification || "Justificativa indisponível."}
+          {decision.justification
+            ? decision.justification.length > 90
+              ? decision.justification.slice(0, 89) + "…"
+              : decision.justification
+            : "Justificativa indisponível."}
         </p>
       </div>
 

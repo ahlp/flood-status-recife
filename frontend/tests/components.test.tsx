@@ -1,9 +1,16 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
 import { DecisionDisplay } from "../src/components/DecisionDisplay.js";
 import { ErrorFallback } from "../src/components/ErrorFallback.js";
-import { GeoConsentModal } from "../src/components/GeoConsentModal.js";
+import {
+  GeoConsentModal,
+  checkGeoConsent,
+  saveGeoConsent,
+} from "../src/components/GeoConsentModal.js";
+import { PrintButton } from "../src/components/PrintButton.js";
+import { RssIcon } from "../src/components/RssIcon.js";
 import { DecisionResult } from "../src/types/index.js";
 
 const mockDecisionSim: DecisionResult = {
@@ -59,53 +66,144 @@ const mockDecisionNao: DecisionResult = {
 };
 
 describe("Frontend Components Test Suite", () => {
-  it("DecisionDisplay renderiza decisão SIM com alerta e fatores de risco", () => {
-    render(<DecisionDisplay decision={mockDecisionSim} />);
-    expect(screen.getByText("SIM!")).toBeDefined();
-    expect(screen.getByText(/Fica em casa hoje/i)).toBeDefined();
-    expect(screen.getByText(/Pico de maré de 2.2m/i)).toBeDefined();
-    expect(screen.getByText("82%")).toBeDefined();
+  beforeEach(() => {
+    localStorage.clear();
+    vi.restoreAllMocks();
   });
 
-  it("DecisionDisplay renderiza decisão NÃO com mensagem segura", () => {
-    render(<DecisionDisplay decision={mockDecisionNao} />);
-    expect(screen.getByText("NÃO!")).toBeDefined();
-    expect(screen.getByText(/Pode sair com segurança/i)).toBeDefined();
-    expect(screen.getByText(/Maré baixa e chuva fraca/i)).toBeDefined();
-    expect(screen.getByText("25%")).toBeDefined();
+  describe("DecisionDisplay Spec Compliance", () => {
+    it("renderiza decisão SIM com alerta, 48px+ de fonte e fatores de risco", () => {
+      render(<DecisionDisplay decision={mockDecisionSim} />);
+      expect(screen.getByText("SIM!")).toBeDefined();
+      expect(screen.getByText(/Fica em casa hoje/i)).toBeDefined();
+      expect(screen.getByText(/Pico de maré de 2.2m/i)).toBeDefined();
+      expect(screen.getByText("82%")).toBeDefined();
+    });
+
+    it("renderiza decisão NÃO com mensagem segura", () => {
+      render(<DecisionDisplay decision={mockDecisionNao} />);
+      expect(screen.getByText("NÃO!")).toBeDefined();
+      expect(screen.getByText(/Pode sair com segurança/i)).toBeDefined();
+      expect(screen.getByText(/Maré baixa e chuva fraca/i)).toBeDefined();
+      expect(screen.getByText("25%")).toBeDefined();
+    });
+
+    it("trunca justificativa para no máximo 90 caracteres quando texto for longo", () => {
+      const longDecision: DecisionResult = {
+        ...mockDecisionSim,
+        justification:
+          "Esta é uma justificativa extremamente longa com mais de noventa caracteres que deve ser truncada automaticamente pela interface.",
+      };
+      render(<DecisionDisplay decision={longDecision} />);
+      const el = screen.getByTitle(longDecision.justification);
+      expect(el.textContent!.length).toBeLessThanOrEqual(90);
+      expect(el.textContent).toContain("…");
+    });
+
+    it("renderiza via crítica próxima quando fornecida", () => {
+      const road = {
+        id: "agamenon",
+        name: "Av. Governador Agamenon Magalhães",
+        neighborhood: "Derby",
+        city: "Recife",
+        lat: -8.05,
+        lng: -34.89,
+        floodRiskLevel: "CRÍTICO" as const,
+        description: "Alagamento",
+      };
+      render(<DecisionDisplay decision={mockDecisionSim} userRoad={road} />);
+      expect(
+        screen.getByText(/Via crítica próxima:/i),
+      ).toBeDefined();
+      expect(
+        screen.getByText(/Av. Governador Agamenon Magalhães/i),
+      ).toBeDefined();
+    });
   });
 
-  it("ErrorFallback exibe texto centralizado e botão Tentar Novamente (US-1, US-2)", () => {
-    const onRetryMock = vi.fn();
-    render(<ErrorFallback onRetry={onRetryMock} />);
+  describe("GeoConsentModal Spec Compliance", () => {
+    it("renderiza texto exato da especificação e botões corretos", () => {
+      const onConsentMock = vi.fn();
+      render(<GeoConsentModal isOpen={true} onConsent={onConsentMock} />);
 
-    expect(
-      screen.getByText(/Não foi possível obter dados hoje/i),
-    ).toBeDefined();
-    const btn = screen.getByRole("button", { name: /Tentar Novamente/i });
-    expect(btn).toBeDefined();
+      expect(
+        screen.getByText(
+          "Deseja que exibamos vias críticas próximas com risco de alagamento?",
+        ),
+      ).toBeDefined();
 
-    fireEvent.click(btn);
-    expect(onRetryMock).toHaveBeenCalledTimes(1);
+      const confirmBtn = screen.getByRole("button", { name: "Sim, localizar" });
+      const cancelBtn = screen.getByRole("button", { name: "Não" });
+      expect(confirmBtn).toBeDefined();
+      expect(cancelBtn).toBeDefined();
+
+      fireEvent.click(confirmBtn);
+      expect(onConsentMock).toHaveBeenCalledWith(true);
+    });
+
+    it("bloqueia e restaura o overflow do body ao abrir/fechar", () => {
+      const { rerender } = render(
+        <GeoConsentModal isOpen={true} onConsent={vi.fn()} />,
+      );
+      expect(document.body.style.overflow).toBe("hidden");
+
+      rerender(<GeoConsentModal isOpen={false} onConsent={vi.fn()} />);
+      expect(document.body.style.overflow).not.toBe("hidden");
+    });
+
+    it("persiste consentimento no localStorage com validade de 30 dias", () => {
+      saveGeoConsent(true);
+      const consent = checkGeoConsent();
+      expect(consent.asked).toBe(true);
+      expect(consent.consent).toBe(true);
+    });
+
+    it("trata consentimento expirado no localStorage como não solicitado", () => {
+      const expiredData = {
+        consent: true,
+        expiresAt: Date.now() - 1000, // expirado
+      };
+      localStorage.setItem("feh_geo_consent", JSON.stringify(expiredData));
+
+      const consent = checkGeoConsent();
+      expect(consent.asked).toBe(false);
+      expect(consent.consent).toBe(false);
+    });
   });
 
-  it("GeoConsentModal abre e dispara callbacks de consentimento", () => {
-    const onConsentMock = vi.fn();
-    const { rerender } = render(
-      <GeoConsentModal isOpen={true} onConsent={onConsentMock} />,
-    );
+  describe("Static Fallback & Error Handling Spec Compliance", () => {
+    it("ErrorFallback exibe texto centralizado e botão Tentar Novamente", () => {
+      const onRetryMock = vi.fn();
+      render(<ErrorFallback onRetry={onRetryMock} />);
 
-    expect(
-      screen.getByText(/Deseja que exibamos vias críticas próximas/i),
-    ).toBeDefined();
+      expect(
+        screen.getByText(
+          "Não foi possível obter dados hoje. Por favor, tente novamente amanhã.",
+        ),
+      ).toBeDefined();
+      const btn = screen.getByRole("button", { name: /Tentar Novamente/i });
+      expect(btn).toBeDefined();
 
-    const confirmBtn = screen.getByRole("button", { name: /Sim, localizar/i });
-    fireEvent.click(confirmBtn);
-    expect(onConsentMock).toHaveBeenCalledWith(true);
+      fireEvent.click(btn);
+      expect(onRetryMock).toHaveBeenCalledTimes(1);
+    });
+  });
 
-    rerender(<GeoConsentModal isOpen={false} onConsent={onConsentMock} />);
-    expect(
-      screen.queryByText(/Deseja que exibamos vias críticas próximas/i),
-    ).toBeNull();
+  describe("PNG Export & RSS Navigation Spec Compliance", () => {
+    it("PrintButton renderiza botão de salvar PNG", () => {
+      render(<PrintButton />);
+      expect(screen.getByRole("button", { name: /Baixar imagem da decisão/i })).toBeDefined();
+      expect(screen.getByText("Salvar PNG")).toBeDefined();
+    });
+
+    it("RssIcon renderiza link direcionando para /rss", () => {
+      render(
+        <BrowserRouter>
+          <RssIcon />
+        </BrowserRouter>,
+      );
+      const link = screen.getByRole("link", { name: /Acessar Feed RSS/i });
+      expect(link.getAttribute("href")).toBe("/rss");
+    });
   });
 });

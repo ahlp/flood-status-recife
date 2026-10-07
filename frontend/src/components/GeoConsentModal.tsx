@@ -112,8 +112,7 @@ export const GeoConsentModal: React.FC<GeoConsentModalProps> = ({
         </div>
 
         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-          Deseja que exibamos vias críticas próximas com risco de alagamento com
-          base na sua localização aproximada?
+          Deseja que exibamos vias críticas próximas com risco de alagamento?
         </p>
 
         <div className="flex gap-3 justify-end">
