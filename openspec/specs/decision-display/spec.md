@@ -24,15 +24,16 @@ The system SHALL display the daily decision ("SIM" or "NÃO") calculated by the 
 - **THEN** Tema da página tem cor base #3498db (azul neutro)
 - **THEN** Transição CSS de 0.3s ocorre ao carregar a página
 
-### Requirement: Exibir Justificativa Curta Contextual
+### Requirement: Exibir Justificativa Curta Contextual com Reticências
 
-The system SHALL display a concise justification (at most 90 characters) below the decision explaining the critical risk factors.
+The system SHALL display a concise justification (at most 90 characters) below the decision explaining the critical risk factors, with ellipsis (…) for truncation when the text exceeds the limit.
 
 #### Scenario: Justificativa curta exibida abaixo da decisão
 
-- **GIVEN** A API retorna justificativa "Pico de maré de 2.2m às 07h30 alinhado a 35mm de chuva"
+- **GIVEN** A API retorna justificativa de mais que 90 caracteres (ex.: "Pico de maré de 2.2m às 07h30 alinhado a 35mm de chuva, e o Rio Tejipió está em alerta com cota de 2.8m")
 - **WHEN** Página renderiza decisão
 - **THEN** Texto abaixo do título tem tamanho 18px e não excede 90 caracteres
+- **THEN** Se o texto for truncado, ele será seguido de "…" (reticência) para indicar que há mais conteúdo
 - **THEN** Centralizado horizontalmente
 
 ### Requirement: Navegação para Feed RSS
