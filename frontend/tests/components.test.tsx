@@ -9,7 +9,11 @@ import {
   checkGeoConsent,
   saveGeoConsent,
 } from "../src/components/GeoConsentModal.js";
-import { PrintButton } from "../src/components/PrintButton.js";
+import {
+  PrintButton,
+  PNG_EXPORT_OPTIONS,
+  buildPngFileName,
+} from "../src/components/PrintButton.js";
 import { RssIcon } from "../src/components/RssIcon.js";
 import { DecisionResult } from "../src/types/index.js";
 
@@ -194,6 +198,15 @@ describe("Frontend Components Test Suite", () => {
         screen.getByRole("button", { name: /Baixar imagem da decisão/i }),
       ).toBeDefined();
       expect(screen.getByText("Salvar PNG")).toBeDefined();
+    });
+
+    it("exportação PNG mantém escala 1.5 (regressão evitada)", () => {
+      expect(PNG_EXPORT_OPTIONS.scale).toBe(1.5);
+    });
+
+    it("nome do arquivo PNG segue o padrão decisao-recife-DDMMYYYY.png", () => {
+      const fileName = buildPngFileName(new Date(2026, 8, 16));
+      expect(fileName).toBe("decisao-recife-16092026.png");
     });
 
     it("RssIcon renderiza link direcionando para /rss", () => {

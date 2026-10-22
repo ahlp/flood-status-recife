@@ -2,6 +2,20 @@ import React, { useState } from "react";
 import html2canvas from "html2canvas";
 import { Download, Loader2, AlertCircle } from "lucide-react";
 
+export const PNG_EXPORT_OPTIONS = {
+  scale: 1.5,
+  useCORS: true,
+  backgroundColor: null,
+  logging: false,
+} as const;
+
+export function buildPngFileName(date: Date = new Date()): string {
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return `decisao-recife-${dd}${mm}${yyyy}.png`;
+}
+
 export const PrintButton: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -15,19 +29,10 @@ export const PrintButton: React.FC = () => {
         document.getElementById("decision-container") || document.body;
 
       // Executa html2canvas com escala 1.5 para alta qualidade (US-1 / RF-09)
-      const canvas = await html2canvas(container, {
-        scale: 1.5,
-        useCORS: true,
-        backgroundColor: null,
-        logging: false,
-      });
+      const canvas = await html2canvas(container, PNG_EXPORT_OPTIONS);
 
-      // Formata data DDMMYYYY (ex.: decisao-recife-16092026.png)
-      const now = new Date();
-      const dd = String(now.getDate()).padStart(2, "0");
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const yyyy = now.getFullYear();
-      const fileName = `decisao-recife-${dd}${mm}${yyyy}.png`;
+      // Formata data do arquivo conforme padrão vigente
+      const fileName = buildPngFileName();
 
       // Cria link de download
       const imageUri = canvas.toDataURL("image/png");
