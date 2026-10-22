@@ -1,12 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { fetchLatestRss, downloadRssXml } from "../services/api.js";
 import { RSSFeedItem } from "../types/index.js";
-import { Rss, Download, ExternalLink, ArrowLeft, Loader2 } from "lucide-react";
+import {
+  Rss,
+  Download,
+  ExternalLink,
+  ArrowLeft,
+  Loader2,
+  Copy,
+  Check,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const RSSView: React.FC = () => {
   const [item, setItem] = useState<RSSFeedItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     document.body.className = "bg-white font-sans text-slate-900 min-h-screen";
@@ -14,7 +24,36 @@ export const RSSView: React.FC = () => {
       setItem(data);
       setLoading(false);
     });
+
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
   }, []);
+
+  // Copia a URL segura do item para o clipboard e exibe toast de confirmação (US-6)
+  const handleCopyLink = async () => {
+    if (!item?.link) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(item.link);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = item.link;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = setTimeout(() => setCopied(false), 3000);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   // Formata snippet para manter entre 200 e 400 caracteres sem cortar palavras
   const formatSnippet = (desc: string): string => {
@@ -101,20 +140,48 @@ export const RSSView: React.FC = () => {
                 <ExternalLink className="w-4 h-4" />
               </a>
 
-              <button
-                onClick={downloadRssXml}
-                aria-label="Download RSS XML"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-xl shadow transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-slate-950"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download RSS (.xml)</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Botão Copiar Link Seguro (US-6) */}
+                <button
+                  onClick={handleCopyLink}
+                  aria-label="Copiar link seguro do feed RSS"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm rounded-xl shadow transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-sky-500"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                  <span>{copied ? "Link copiado!" : "Copiar Link Seguro"}</span>
+                </button>
+
+                <button
+                  onClick={downloadRssXml}
+                  aria-label="Download RSS XML"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-xl shadow transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-slate-950"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download RSS (.xml)</span>
+                </button>
+              </div>
             </div>
           </article>
         ) : (
           <p className="text-slate-600">Nenhum item encontrado no feed RSS.</p>
         )}
       </main>
+
+      {/* Toast de confirmação de cópia */}
+      {copied && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl shadow-lg animate-fade-in"
+        >
+          <Check className="w-4 h-4 text-emerald-400" />
+          <span>Link copiado!</span>
+        </div>
+      )}
 
       {/* Footer */}
       <footer

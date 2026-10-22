@@ -17,6 +17,18 @@ The system SHALL present the latest published daily RSS item on a dedicated page
 - **THEN** Um snippet da justificativa, contendo no mínimo 200 caracteres e máximo 400 caracteres, é mostrado abaixo do título
 - **THEN** A estrutura visual segue um estilo minimalista com fundo branco e ícone RSS visível no cabeçalho
 
+### Requirement: Copiar Link Seguro do Feed RSS
+
+The system SHALL provide a "Copiar Link" button next to the "Download RSS" button that copies the secure feed URL to the clipboard and confirms the action with a toast notification.
+
+#### Scenario: Botão Copiar Link funcional
+
+- **GIVEN** O usuário está na página /rss com o item do feed carregado
+- **WHEN** O usuário clica no botão "Copiar Link Seguro"
+- **THEN** A URL segura do item é copiada para a área de transferência via Clipboard API
+- **THEN** Um toast de confirmação "Link copiado!" é exibido temporariamente na tela
+- **THEN** O botão permanece ao lado do botão "Download RSS"
+
 ### Requirement: Download do Arquivo XML RSS
 
 The system SHALL allow users to download the complete XML feed file with proper attachment headers.
