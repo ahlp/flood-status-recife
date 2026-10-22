@@ -59,10 +59,30 @@ export const STATIC_FALLBACK_DECISION: DecisionResult = {
 export async function fetchDecision(): Promise<DecisionResult> {
   let attempts = 0;
   const maxAttempts = 3;
+  const LAST_DECISION_KEY = "feh_last_decision";
+
+  const getLastStoredDecision = (): DecisionResult | null => {
+    try {
+      const raw = localStorage.getItem(LAST_DECISION_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as DecisionResult;
+      return { ...parsed, isFallback: true };
+    } catch {
+      return null;
+    }
+  };
 
   while (attempts < maxAttempts) {
     try {
       const response = await api.get<DecisionResult>("/api/decision");
+      try {
+        localStorage.setItem(
+          LAST_DECISION_KEY,
+          JSON.stringify({ ...response.data, isFallback: false }),
+        );
+      } catch {
+        // Ignora falhas de quota/armazenamento
+      }
       return response.data;
     } catch (error) {
       attempts++;
@@ -71,16 +91,17 @@ export async function fetchDecision(): Promise<DecisionResult> {
       );
       if (attempts >= maxAttempts) {
         console.warn(
-          "[FEH] Ativando fallback estático após 3 falhas consecutivas.",
+          "[FEH] Ativando fallback após 3 falhas consecutivas.",
           error,
         );
-        return STATIC_FALLBACK_DECISION;
+        // Prioriza a última decisão carregada com sucesso (PWA offline)
+        return getLastStoredDecision() || STATIC_FALLBACK_DECISION;
       }
       await new Promise((res) => setTimeout(res, attempts * 500));
     }
   }
 
-  return STATIC_FALLBACK_DECISION;
+  return getLastStoredDecision() || STATIC_FALLBACK_DECISION;
 }
 
 export async function fetchLocationInfo(): Promise<{
