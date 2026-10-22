@@ -149,7 +149,9 @@ export class DataFetcherService {
 
       const isHighTideMorning =
         hasHighTideDuringMorning ||
-        (morningPeakHour >= 6 && morningPeakHour <= 10 && morningPeakHeight >= 1.9);
+        (morningPeakHour >= 6 &&
+          morningPeakHour <= 10 &&
+          morningPeakHeight >= 1.9);
 
       return {
         peakTime: morningPeakTime,
@@ -237,9 +239,14 @@ export class DataFetcherService {
 
       // Determinar cota e status do Rio Tejipió com base na telemetria CEMADEN
       const tejipioLevel =
-        tejipioPcd && typeof tejipioPcd.nivel === "number" && tejipioPcd.nivel > 0
+        tejipioPcd &&
+        typeof tejipioPcd.nivel === "number" &&
+        tejipioPcd.nivel > 0
           ? Number(
-              (tejipioPcd.nivel > 10 ? tejipioPcd.nivel / 4 : tejipioPcd.nivel).toFixed(2),
+              (tejipioPcd.nivel > 10
+                ? tejipioPcd.nivel / 4
+                : tejipioPcd.nivel
+              ).toFixed(2),
             )
           : 2.3;
 
@@ -313,9 +320,7 @@ export class DataFetcherService {
     } catch (error) {
       const durationMs = Date.now() - start;
       recordExternalApiCall("cemaden", durationMs, false);
-      logger.error(
-        `Erro ao consultar CEMADEN: ${(error as Error).message}`,
-      );
+      logger.error(`Erro ao consultar CEMADEN: ${(error as Error).message}`);
 
       return [
         {

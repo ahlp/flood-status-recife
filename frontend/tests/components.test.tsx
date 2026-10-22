@@ -112,9 +112,7 @@ describe("Frontend Components Test Suite", () => {
         description: "Alagamento",
       };
       render(<DecisionDisplay decision={mockDecisionSim} userRoad={road} />);
-      expect(
-        screen.getByText(/Via crítica próxima:/i),
-      ).toBeDefined();
+      expect(screen.getByText(/Via crítica próxima:/i)).toBeDefined();
       expect(
         screen.getByText(/Av. Governador Agamenon Magalhães/i),
       ).toBeDefined();
@@ -192,7 +190,9 @@ describe("Frontend Components Test Suite", () => {
   describe("PNG Export & RSS Navigation Spec Compliance", () => {
     it("PrintButton renderiza botão de salvar PNG", () => {
       render(<PrintButton />);
-      expect(screen.getByRole("button", { name: /Baixar imagem da decisão/i })).toBeDefined();
+      expect(
+        screen.getByRole("button", { name: /Baixar imagem da decisão/i }),
+      ).toBeDefined();
       expect(screen.getByText("Salvar PNG")).toBeDefined();
     });
 

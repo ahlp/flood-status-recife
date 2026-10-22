@@ -5,3 +5,7 @@ package-lock.json
 .git/
 .env*
 coverage/
+
+# Local workspace artifacts (not present in CI checkout)
+.worktrees/
+NEXT_STEPS.md

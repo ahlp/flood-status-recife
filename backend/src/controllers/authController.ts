@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { logger } from "../utils/logger.js";
 
-
 export class AuthController {
   public login(req: Request, res: Response): void {
     const { username, password } = req.body || {};
