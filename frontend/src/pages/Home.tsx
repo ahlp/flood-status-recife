@@ -10,9 +10,17 @@ import {
 } from "../components/GeoConsentModal.js";
 import { ErrorFallback } from "../components/ErrorFallback.js";
 import { ShieldAlert, BarChart3, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+
+const CITIES = [
+  { id: "recife", label: "Recife" },
+  { id: "olinda", label: "Olinda" },
+  { id: "jaboatao", label: "Jaboatão" },
+];
 
 export const Home: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedCity = searchParams.get("city") || "recife";
   const [decision, setDecision] = useState<DecisionResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -23,7 +31,7 @@ export const Home: React.FC = () => {
     setLoading(true);
     setError(false);
     try {
-      const data = await fetchDecision();
+      const data = await fetchDecision(selectedCity);
       setDecision(data);
 
       // Atualiza classe do body para o tema reativo correspondente (RF-06 / US-03)
@@ -41,7 +49,7 @@ export const Home: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedCity]);
 
   useEffect(() => {
     loadDecision();
@@ -115,6 +123,22 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-1 bg-white/15 backdrop-blur-md p-1 rounded-full border border-white/20">
+            {CITIES.map((city) => (
+              <button
+                key={city.id}
+                onClick={() => setSearchParams({ city: city.id })}
+                aria-pressed={selectedCity === city.id}
+                className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors cursor-pointer ${
+                  selectedCity === city.id
+                    ? "bg-white text-slate-900"
+                    : "text-white/80 hover:text-white"
+                }`}
+              >
+                {city.label}
+              </button>
+            ))}
+          </div>
           <RssIcon />
           <Link
             to="/dashboard"

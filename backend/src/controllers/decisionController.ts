@@ -5,6 +5,7 @@ import { dataFetcherService } from "../services/dataFetcher.js";
 import { logger } from "../utils/logger.js";
 import { recordDecisionRequest } from "../utils/metrics.js";
 import { DecisionResult } from "../types/index.js";
+import { resolveCity, listSupportedCityIds } from "../config/cities.js";
 
 export class DecisionController {
   /**
@@ -12,8 +13,19 @@ export class DecisionController {
    * Retorna a decisão do dia com justificativa e fatores de risco
    */
   public async getDecision(req: Request, res: Response): Promise<void> {
+    const cityParam = req.query.city as string | undefined;
+    const city = resolveCity(cityParam);
+
+    if (!city) {
+      res.status(400).json({
+        error: "Bad Request",
+        message: `Cidade não suportada. Cidades disponíveis: ${listSupportedCityIds().join(", ")}.`,
+      });
+      return;
+    }
+
     const todayDateStr = new Date().toISOString().slice(0, 10);
-    const cacheKey = `feh:decision:${todayDateStr}`;
+    const cacheKey = `feh:decision:${city.id}:${todayDateStr}`;
 
     recordDecisionRequest();
 
@@ -22,7 +34,7 @@ export class DecisionController {
       const cached = await cacheService.get<DecisionResult>(cacheKey);
       if (cached) {
         logger.info(
-          `⚡ Decisão diária servida do cache [${cached.value}] - Risco: ${cached.riskScore}%`,
+          `⚡ Decisão diária [${city.id}] servida do cache [${cached.value}] - Risco: ${cached.riskScore}%`,
         );
         res.json(cached);
         return;
@@ -30,9 +42,12 @@ export class DecisionController {
 
       // 2. Se não estiver em cache, executa inferência em tempo de execução
       logger.info(
-        "🔍 Decisão não encontrada em cache. Executando avaliação...",
+        `🔍 Decisão [${city.id}] não encontrada em cache. Executando avaliação...`,
       );
-      const result = await riskEngineService.evaluateCurrentStatus();
+      const result = await riskEngineService.evaluateCurrentStatus(
+        undefined,
+        city,
+      );
 
       // 3. Salva no cache com TTL de 24h (86400s)
       await cacheService.set(cacheKey, result, 86400);
@@ -40,10 +55,14 @@ export class DecisionController {
       res.json(result);
     } catch (error) {
       logger.error(
-        `❌ Falha ao processar decisão: ${(error as Error).message}`,
+        `❌ Falha ao processar decisão [${city.id}]: ${(error as Error).message}`,
       );
       // Fallback estático seguro (RF-04 / US-07)
-      const fallback = riskEngineService.getStaticFallbackResult();
+      const fallback = {
+        ...riskEngineService.getStaticFallbackResult(),
+        city: city.id,
+        cityName: city.name,
+      };
       res.json(fallback);
     }
   }

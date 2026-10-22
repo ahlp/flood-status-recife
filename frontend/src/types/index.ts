@@ -43,6 +43,8 @@ export interface DecisionFactors {
 
 export interface DecisionResult {
   value: DecisionValue;
+  city?: string;
+  cityName?: string;
   justification: string;
   extendedDescription: string;
   riskScore: number;

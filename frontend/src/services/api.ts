@@ -56,13 +56,16 @@ export const STATIC_FALLBACK_DECISION: DecisionResult = {
   isFallback: true,
 };
 
-export async function fetchDecision(): Promise<DecisionResult> {
+export async function fetchDecision(city?: string): Promise<DecisionResult> {
   let attempts = 0;
   const maxAttempts = 3;
+  const params = city ? { city } : undefined;
 
   while (attempts < maxAttempts) {
     try {
-      const response = await api.get<DecisionResult>("/api/decision");
+      const response = await api.get<DecisionResult>("/api/decision", {
+        params,
+      });
       return response.data;
     } catch (error) {
       attempts++;

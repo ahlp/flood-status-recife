@@ -9,6 +9,7 @@ import { logger } from "../utils/logger.js";
 import { recordExternalApiCall } from "../utils/metrics.js";
 import { withRetry } from "../utils/retry.js";
 import { createRequire } from "module";
+import { CityConfig, SUPPORTED_CITIES } from "../config/cities.js";
 const require = createRequire(import.meta.url);
 const criticalRoadsData: CriticalRoad[] = require("../data/criticalRoads.json");
 
@@ -16,16 +17,24 @@ export class DataFetcherService {
   private static readonly RECIFE_LAT = -8.0578;
   private static readonly RECIFE_LNG = -34.8829;
 
+  private coordsFor(city?: CityConfig): { lat: number; lng: number } {
+    return {
+      lat: city?.lat ?? DataFetcherService.RECIFE_LAT,
+      lng: city?.lng ?? DataFetcherService.RECIFE_LNG,
+    };
+  }
+
   /**
    * Coleta dados pluviométricos via Open-Meteo API
    * (Chuva acumulada na madrugada 00h-06h e previsão horária matinal 06h-10h)
    */
-  public async fetchWeatherData(): Promise<WeatherData> {
+  public async fetchWeatherData(city?: CityConfig): Promise<WeatherData> {
     const start = Date.now();
     try {
+      const { lat, lng } = this.coordsFor(city);
       const data = await withRetry(
         async () => {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${DataFetcherService.RECIFE_LAT}&longitude=${DataFetcherService.RECIFE_LNG}&hourly=precipitation,precipitation_probability&timezone=America%2FRecife&forecast_days=2`;
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=precipitation,precipitation_probability&timezone=America%2FRecife&forecast_days=2`;
           const response = await axios.get(url, { timeout: 5000 });
           return response.data;
         },
@@ -90,12 +99,13 @@ export class DataFetcherService {
    * Converte a cota do Nível Médio do Mar (MSL) para o referencial do Zero Hidrográfico (ZH) local (+1.35m)
    * A maré no Recife varia tipicamente de 0.2m (baixa-mar) a 2.6m (preamar de sizígia)
    */
-  public async fetchTideData(): Promise<TideData> {
+  public async fetchTideData(city?: CityConfig): Promise<TideData> {
     const start = Date.now();
     try {
+      const { lat, lng } = this.coordsFor(city);
       const data = await withRetry(
         async () => {
-          const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${DataFetcherService.RECIFE_LAT}&longitude=${DataFetcherService.RECIFE_LNG}&hourly=sea_level_height_msl&timezone=America%2FRecife&forecast_days=2`;
+          const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lng}&hourly=sea_level_height_msl&timezone=America%2FRecife&forecast_days=2`;
           const response = await axios.get(url, { timeout: 5000 });
           return response.data;
         },
@@ -179,7 +189,7 @@ export class DataFetcherService {
    * Coleta níveis dos principais rios da RMR (Capibaribe, Tejipió, Beberibe) via CEMADEN
    * Consome a rede hidrológica de PCDs telemétricas em tempo real
    */
-  public async fetchRiverData(): Promise<RiverData[]> {
+  public async fetchRiverData(city?: CityConfig): Promise<RiverData[]> {
     const start = Date.now();
     try {
       const responseData = await withRetry(
@@ -209,17 +219,11 @@ export class DataFetcherService {
         Array.isArray(parsed) && parsed[0]?.estacao ? parsed[0].estacao : [];
 
       // Filtrar estações de Pernambuco / Região Metropolitana do Recife
+      const allowedCities = city?.stations ?? SUPPORTED_CITIES.recife.stations;
       const peStations = rawStations.filter(
         (s: any) =>
           s.uf === "PE" ||
-          (s.cidade &&
-            [
-              "RECIFE",
-              "JABOATÃO DOS GUARARAPES",
-              "OLINDA",
-              "SÃO LOURENÇO DA MATA",
-              "CAMARAGIBE",
-            ].includes(s.cidade.toUpperCase())),
+          (s.cidade && allowedCities.includes(s.cidade.toUpperCase())),
       );
 
       // Estação de Tejipió / Jaboatão (PCD 260790119H ou Jaboatão dos Guararapes)

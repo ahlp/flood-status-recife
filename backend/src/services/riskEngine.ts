@@ -7,6 +7,7 @@ import {
   DecisionValue,
 } from "../types/index.js";
 import { dataFetcherService } from "./dataFetcher.js";
+import { CityConfig } from "../config/cities.js";
 
 export class RiskEngineService {
   private static readonly RISK_THRESHOLD = 65; // Corte em 65%
@@ -154,10 +155,11 @@ export class RiskEngineService {
    */
   public async evaluateCurrentStatus(
     criticalRoads?: CriticalRoad[],
+    city?: CityConfig,
   ): Promise<DecisionResult> {
-    const rainfall = await dataFetcherService.fetchWeatherData();
-    const tide = await dataFetcherService.fetchTideData();
-    const rivers = await dataFetcherService.fetchRiverData();
+    const rainfall = await dataFetcherService.fetchWeatherData(city);
+    const tide = await dataFetcherService.fetchTideData(city);
+    const rivers = await dataFetcherService.fetchRiverData(city);
     const roads = criticalRoads || dataFetcherService.getCriticalRoads();
 
     const riskScore = this.calculateRiskScore(rainfall, tide, rivers);
@@ -185,6 +187,8 @@ export class RiskEngineService {
 
     return {
       value,
+      city: city?.id,
+      cityName: city?.name,
       justification,
       extendedDescription,
       riskScore,
