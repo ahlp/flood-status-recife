@@ -6,7 +6,7 @@ Deliver daily static RSS 2.0 XML feeds and a dedicated minimalist view for citiz
 
 ### Requirement: Exibir Último Item do Feed RSS
 
-The system SHALL present the latest published daily RSS item on a dedicated page with full title, secure external link and justification snippet.
+The system SHALL present the latest published daily RSS item on a dedicated page with full title, secure external link and justification snippet. The snippet SHALL always contain between 200 and 400 characters; shorter texts SHALL be complemented with operational context and longer texts SHALL be truncated at a word boundary.
 
 #### Scenario: Verificar exibição correta do título, link e snippet da justificativa
 

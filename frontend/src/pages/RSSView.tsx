@@ -3,6 +3,7 @@ import { fetchLatestRss, downloadRssXml } from "../services/api.js";
 import { RSSFeedItem } from "../types/index.js";
 import { Rss, Download, ExternalLink, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatSnippet } from "../utils/rssSnippet.js";
 
 export const RSSView: React.FC = () => {
   const [item, setItem] = useState<RSSFeedItem | null>(null);
@@ -15,19 +16,6 @@ export const RSSView: React.FC = () => {
       setLoading(false);
     });
   }, []);
-
-  // Formata snippet para manter entre 200 e 400 caracteres sem cortar palavras
-  const formatSnippet = (desc: string): string => {
-    if (!desc) return "";
-    if (desc.length >= 200 && desc.length <= 400) return desc;
-    if (desc.length > 400) {
-      const cut = desc.substring(0, 395);
-      const lastSpace = cut.lastIndexOf(" ");
-      return (lastSpace > 200 ? cut.substring(0, lastSpace) : cut) + "...";
-    }
-    // Se for menor que 200, complementa contextualmente
-    return `${desc} Este resumo é gerado automaticamente pelo algoritmo preditivo com base nas condições meteorológicas e de maré do Recife.`;
-  };
 
   const truncatedTitle =
     item?.title && item.title.length > 100
