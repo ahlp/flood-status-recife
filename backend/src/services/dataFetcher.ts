@@ -9,6 +9,7 @@ import { logger } from "../utils/logger.js";
 import { recordExternalApiCall } from "../utils/metrics.js";
 import { withRetry } from "../utils/retry.js";
 import { createRequire } from "module";
+import { CEMADEN_SLA } from "../config/sla.js";
 const require = createRequire(import.meta.url);
 const criticalRoadsData: CriticalRoad[] = require("../data/criticalRoads.json");
 
@@ -186,12 +187,15 @@ export class DataFetcherService {
         async () => {
           const url = "https://resources.cemaden.gov.br/dados/327mi_24.json";
           const res = await axios.get(url, {
-            timeout: 5000,
+            timeout: CEMADEN_SLA.timeoutMs,
             headers: { Accept: "application/json, text/plain, */*" },
           });
           return res.data;
         },
-        { serviceName: "CEMADEN (Rede Hidrológica)" },
+        {
+          serviceName: "CEMADEN (Rede Hidrológica)",
+          maxRetries: CEMADEN_SLA.maxAttempts,
+        },
       );
 
       const durationMs = Date.now() - start;

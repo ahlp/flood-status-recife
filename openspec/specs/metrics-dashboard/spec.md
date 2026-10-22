@@ -4,6 +4,18 @@ Provide an internal operational monitoring dashboard with latency metrics, relia
 
 ## Requirements
 
+### Requirement: SLA Canônico das Integrações Externas
+
+The external integrations SHALL follow a single canonical SLA policy. The CEMADEN integration SHALL make at most 2 attempts with a 2500ms timeout per attempt before activating the static fallback. No implementation may override these values without updating this specification.
+
+#### Scenario: CEMADEN respeita o SLA antes do fallback
+
+- **GIVEN** O serviço CEMADEN está indisponível ou lento
+- **WHEN** O backend consulta a rede hidrológica
+- **THEN** São realizadas no máximo 2 tentativas, cada uma com timeout de 2500ms
+- **THEN** Após esgotar as tentativas, o fallback estático de níveis fluviais é acionado
+- **THEN** Os valores de tentativas e timeout são idênticos aos definidos nesta especificação
+
 ### Requirement: Exibir Métricas de Latência das Chamadas Externas
 
 The system SHALL display time-series charts showing latency in milliseconds for Open-Meteo, Marinha do Brasil and CEMADEN/APAC over the last 24 hours.
