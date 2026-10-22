@@ -22,12 +22,12 @@ export const PrintButton: React.FC = () => {
         logging: false,
       });
 
-      // Formata data DDMMYYYY (ex.: decisao-recife-16092026.png)
+      // Formata data ISO 8601 (ex.: decisao-recife-2026-09-16.png)
       const now = new Date();
-      const dd = String(now.getDate()).padStart(2, "0");
+      const yyyy = String(now.getFullYear());
       const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const yyyy = now.getFullYear();
-      const fileName = `decisao-recife-${dd}${mm}${yyyy}.png`;
+      const dd = String(now.getDate()).padStart(2, "0");
+      const fileName = `decisao-recife-${yyyy}-${mm}-${dd}.png`;
 
       // Cria link de download
       const imageUri = canvas.toDataURL("image/png");

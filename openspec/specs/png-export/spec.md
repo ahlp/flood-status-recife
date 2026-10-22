@@ -14,7 +14,7 @@ The system SHALL capture the decision display container and generate a downloada
 - **WHEN** O usuário clica no botão "Salvar PNG"
 - **THEN** A biblioteca html2canvas é acionada com escala 1.5
 - **THEN** Um arquivo de imagem PNG de alta resolução é gerado
-- **THEN** O download automático é iniciado com o nome padrão decisao-recife-DDMMYYYY.png
+- **THEN** O download automático é iniciado com o nome padrão decisao-recife-YYYY-MM-DD.png (ISO 8601)
 
 ### Requirement: Tratamento de Falhas na Exportação
 
