@@ -35,6 +35,17 @@ The system SHALL display a concise justification (at most 90 characters) below t
 - **THEN** Texto abaixo do título tem tamanho 18px e não excede 90 caracteres
 - **THEN** Centralizado horizontalmente
 
+### Requirement: Exibir Métricas de Risco com Limiar Correto (60%)
+
+The system SHALL use a risk threshold of 60% for determining the daily decision, not 65%. The UI shall display the current cutoff value as "Corte: 60%".
+
+#### Scenario: Exibir índice de risco com corte correto
+
+- **GIVEN** A API retorna decisão "SIM" com riskScore > 60%
+- **WHEN** Página renderiza o elemento "Índice de Risco"
+- **THEN** O valor da pontuação é exibido corretamente
+- **THEN** O subtítulo mostra "Corte: 60%" (não "Corte: 65%")
+
 ### Requirement: Navegação para Feed RSS
 
 The system SHALL provide an accessible RSS icon in the header that routes to the dedicated RSS view.

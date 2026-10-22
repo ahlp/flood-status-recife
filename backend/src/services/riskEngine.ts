@@ -9,7 +9,11 @@ import {
 import { dataFetcherService } from "./dataFetcher.js";
 
 export class RiskEngineService {
-  private static readonly RISK_THRESHOLD = 65; // Corte em 65%
+  private static readonly RISK_THRESHOLD = 60; // Corte em 60% (Defesa Civil)
+
+  public static getRiskThreshold(): number {
+    return RiskEngineService.RISK_THRESHOLD;
+  }
 
   /**
    * Trunca texto respeitando limite de caracteres com reticências (US-02)

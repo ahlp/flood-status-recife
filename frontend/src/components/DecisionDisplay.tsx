@@ -106,7 +106,7 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({
             <span>Índice de Risco</span>
           </div>
           <div className="text-lg font-bold">{decision.riskScore}%</div>
-          <div className="text-xs text-white/70">Corte: 65%</div>
+          <div className="text-xs text-white/70">Corte: 60%</div>
         </div>
       </div>
 
