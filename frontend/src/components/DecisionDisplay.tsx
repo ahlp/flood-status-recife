@@ -18,6 +18,7 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({
   userRoad,
 }) => {
   const isStayHome = decision.value === "SIM";
+  const isAttention = decision.value === "ATENÇÃO";
 
   return (
     <div
@@ -42,6 +43,11 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({
               <AlertTriangle className="w-12 h-12 md:w-16 md:h-16 inline-block text-amber-300 stroke-[2.5]" />
               <span>SIM!</span>
             </>
+          ) : isAttention ? (
+            <>
+              <AlertTriangle className="w-12 h-12 md:w-16 md:h-16 inline-block text-yellow-300 stroke-[2.5]" />
+              <span>ATENÇÃO!</span>
+            </>
           ) : (
             <>
               <CheckCircle className="w-12 h-12 md:w-16 md:h-16 inline-block text-emerald-300 stroke-[2.5]" />
@@ -50,7 +56,11 @@ export const DecisionDisplay: React.FC<DecisionDisplayProps> = ({
           )}
         </h1>
         <p className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide text-white/90 mt-2">
-          {isStayHome ? "Fica em casa hoje" : "Pode sair com segurança"}
+          {isStayHome
+            ? "Fica em casa hoje"
+            : isAttention
+              ? "Redobre a atenção hoje"
+              : "Pode sair com segurança"}
         </p>
       </div>
 

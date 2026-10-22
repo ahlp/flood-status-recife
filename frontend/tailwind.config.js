@@ -9,6 +9,7 @@ export default {
         "brand-orange": "#e67e22",
         "brand-red": "#c0392b",
         "brand-alert": "#ff4d00",
+        "brand-warning": "#f39c12",
         "brand-neutral-bg": "#f8fafc",
         "brand-gray-light": "#f5f5f5",
       },

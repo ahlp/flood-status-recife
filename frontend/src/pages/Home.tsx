@@ -30,6 +30,9 @@ export const Home: React.FC = () => {
       if (data.value === "SIM") {
         document.body.className =
           "theme-alert bg-brand-alert min-h-screen font-sans text-white transition-colors duration-300";
+      } else if (data.value === "ATENÇÃO") {
+        document.body.className =
+          "theme-warning bg-brand-warning min-h-screen font-sans text-white transition-colors duration-300";
       } else {
         document.body.className =
           "theme-neutral bg-brand-blue min-h-screen font-sans text-white transition-colors duration-300";

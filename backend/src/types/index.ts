@@ -1,4 +1,4 @@
-export type DecisionValue = "SIM" | "NÃO";
+export type DecisionValue = "SIM" | "NÃO" | "ATENÇÃO";
 
 export interface WeatherData {
   rainPast6h: number; // Chuva acumulada 00h-06h em mm

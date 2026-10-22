@@ -6,7 +6,7 @@ Provide instant daily decision display (SIM or NÃO) regarding urban flooding an
 
 ### Requirement: Exibir Decisão do Dia Centralizada
 
-The system SHALL display the daily decision ("SIM" or "NÃO") calculated by the predictive risk engine in prominent typography (48px+) centered on screen without requiring login.
+The system SHALL display the daily decision ("SIM", "NÃO" or "ATENÇÃO") calculated by the predictive risk engine in prominent typography (48px+) centered on screen without requiring login. The "ATENÇÃO" state SHALL apply when the risk score is between 50% and 65%.
 
 #### Scenario: Decisão SIM exibida corretamente com tema alerta
 
@@ -22,6 +22,14 @@ The system SHALL display the daily decision ("SIM" or "NÃO") calculated by the 
 - **WHEN** A API interna retorna decisão "NÃO" e justificativa curta
 - **THEN** Página exibe texto "NÃO" em fonte 48px centralizado
 - **THEN** Tema da página tem cor base #3498db (azul neutro)
+- **THEN** Transição CSS de 0.3s ocorre ao carregar a página
+
+#### Scenario: Decisão ATENÇÃO exibida corretamente com tema amarelo
+
+- **GIVEN** Usuário acessa a página sem parâmetros
+- **WHEN** A API interna retorna decisão "ATENÇÃO" (risco entre 50% e 65%)
+- **THEN** Página exibe texto "ATENÇÃO" em fonte 48px centralizado
+- **THEN** Tema da página tem cor base #f39c12 (amarelo)
 - **THEN** Transição CSS de 0.3s ocorre ao carregar a página
 
 ### Requirement: Exibir Justificativa Curta Contextual

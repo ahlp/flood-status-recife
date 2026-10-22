@@ -10,6 +10,7 @@ import { dataFetcherService } from "./dataFetcher.js";
 
 export class RiskEngineService {
   private static readonly RISK_THRESHOLD = 65; // Corte em 65%
+  private static readonly ATTENTION_THRESHOLD = 50; // Faixa de ATENÇÃO a partir de 50%
 
   /**
    * Trunca texto respeitando limite de caracteres com reticências (US-02)
@@ -113,6 +114,10 @@ export class RiskEngineService {
       return this.truncateJustification(
         `Pico de maré de ${tide.peakHeight.toFixed(1)}m às ${tide.peakTime} alinhado a ${totalRain}mm de chuva.`,
       );
+    } else if (value === "ATENÇÃO") {
+      return this.truncateJustification(
+        `Maré de ${tide.peakHeight.toFixed(1)}m às ${tide.peakTime} e ${totalRain}mm de chuva. Risco moderado, atenção redobrada.`,
+      );
     } else {
       if (totalRain < 5 && tide.peakHeight < 1.9) {
         return this.truncateJustification(
@@ -146,6 +151,10 @@ export class RiskEngineService {
       return `Alerta de Risco Alto (${riskScore}%): Fique em casa nesta manhã. A combinação de maré alta com pico de ${tide.peakHeight.toFixed(1)}m às ${tide.peakTime}, somada a precipitação de ${totalRain}mm acumulada/prevista e cota dos rios (${riverStatusSummary}), gera alto potencial de ilhamento nas principais vias metropolitanas do Recife.`;
     }
 
+    if (value === "ATENÇÃO") {
+      return `Estado de Atenção (${riskScore}%): Risco moderado de alagamentos nesta manhã. Maré prevista de ${tide.peakHeight.toFixed(1)}m às ${tide.peakTime} e precipitação de ${totalRain}mm acumulada/prevista. Situação dos rios: ${riverStatusSummary}. Recomenda-se cautela redobrada nas vias críticas e acompanhamento das atualizações.`;
+    }
+
     return `Situação Normal (${riskScore}%): Pode sair com tranquilidade nesta manhã. As condições meteorológicas e fluviométricas indicam baixo risco de alagamentos. Pico de maré previsto para ${tide.peakTime} com altura de ${tide.peakHeight.toFixed(1)}m e chuva de ${totalRain}mm. Situação dos rios: ${riverStatusSummary}.`;
   }
 
@@ -162,7 +171,11 @@ export class RiskEngineService {
 
     const riskScore = this.calculateRiskScore(rainfall, tide, rivers);
     const value: DecisionValue =
-      riskScore > RiskEngineService.RISK_THRESHOLD ? "SIM" : "NÃO";
+      riskScore > RiskEngineService.RISK_THRESHOLD
+        ? "SIM"
+        : riskScore >= RiskEngineService.ATTENTION_THRESHOLD
+          ? "ATENÇÃO"
+          : "NÃO";
 
     const justification = this.generateShortJustification(
       value,
