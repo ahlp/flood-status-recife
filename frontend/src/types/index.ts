@@ -88,3 +88,15 @@ export interface LogEntry {
   service: string;
   metadata?: Record<string, unknown>;
 }
+
+export interface DecisionHistoryEntry {
+  date: string; // YYYY-MM-DD
+  value: DecisionValue;
+  riskScore: number;
+  justification: string;
+}
+
+export interface DecisionHistoryResponse {
+  month: string;
+  entries: DecisionHistoryEntry[];
+}

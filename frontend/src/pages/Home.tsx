@@ -9,7 +9,7 @@ import {
   checkGeoConsent,
 } from "../components/GeoConsentModal.js";
 import { ErrorFallback } from "../components/ErrorFallback.js";
-import { ShieldAlert, BarChart3, Loader2 } from "lucide-react";
+import { ShieldAlert, BarChart3, Loader2, CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Home: React.FC = () => {
@@ -116,6 +116,14 @@ export const Home: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <RssIcon />
+          <Link
+            to="/historico"
+            title="Histórico de Decisões"
+            aria-label="Acessar Histórico de Decisões"
+            className="p-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-full transition-all focus-visible:ring-2 focus-visible:ring-white"
+          >
+            <CalendarDays className="w-5 h-5" />
+          </Link>
           <Link
             to="/dashboard"
             title="Dashboard Interno de Métricas"

@@ -6,6 +6,7 @@ import {
   SourceSuccessRate,
   DailyDecisionPoint,
   LogEntry,
+  DecisionHistoryResponse,
 } from "../types/index.js";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
@@ -177,4 +178,12 @@ export async function fetchLogs(
     params,
   });
   return res.data.logs;
+}
+
+// --- Histórico de Decisões ---
+export async function fetchDecisionHistory(
+  month: string,
+): Promise<DecisionHistoryResponse> {
+  const res = await api.get("/api/decisions/history", { params: { month } });
+  return res.data;
 }

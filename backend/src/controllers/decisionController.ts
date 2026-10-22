@@ -5,6 +5,7 @@ import { dataFetcherService } from "../services/dataFetcher.js";
 import { logger } from "../utils/logger.js";
 import { recordDecisionRequest } from "../utils/metrics.js";
 import { DecisionResult } from "../types/index.js";
+import { historyService } from "../services/historyService.js";
 
 export class DecisionController {
   /**
@@ -24,6 +25,7 @@ export class DecisionController {
         logger.info(
           `⚡ Decisão diária servida do cache [${cached.value}] - Risco: ${cached.riskScore}%`,
         );
+        void historyService.record(cached);
         res.json(cached);
         return;
       }
@@ -36,6 +38,9 @@ export class DecisionController {
 
       // 3. Salva no cache com TTL de 24h (86400s)
       await cacheService.set(cacheKey, result, 86400);
+
+      // 4. Registra no histórico de decisões passadas
+      void historyService.record(result);
 
       res.json(result);
     } catch (error) {

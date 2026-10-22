@@ -3,12 +3,16 @@ import { decisionController } from "../controllers/decisionController.js";
 import { rssController } from "../controllers/rssController.js";
 import { metricsController } from "../controllers/metricsController.js";
 import { authController } from "../controllers/authController.js";
+import { historyController } from "../controllers/historyController.js";
 import { authMiddleware } from "../middlewares/auth.js";
 
 const router = Router();
 
 // --- Rotas Públicas Principais ---
 router.get("/decision", (req, res) => decisionController.getDecision(req, res));
+router.get("/decisions/history", (req, res) =>
+  historyController.getHistory(req, res),
+);
 router.get("/location", (req, res) =>
   decisionController.getLocationInfo(req, res),
 );
