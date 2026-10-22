@@ -149,6 +149,19 @@ describe("Frontend Components Test Suite", () => {
       expect(document.body.style.overflow).not.toBe("hidden");
     });
 
+    it("restaura o valor original de overflow do body ao fechar o modal", () => {
+      document.body.style.overflow = "scroll";
+      const { rerender } = render(
+        <GeoConsentModal isOpen={true} onConsent={vi.fn()} />,
+      );
+      expect(document.body.style.overflow).toBe("hidden");
+
+      rerender(<GeoConsentModal isOpen={false} onConsent={vi.fn()} />);
+      expect(document.body.style.overflow).toBe("scroll");
+
+      document.body.style.overflow = "";
+    });
+
     it("persiste consentimento no localStorage com validade de 30 dias", () => {
       saveGeoConsent(true);
       const consent = checkGeoConsent();
