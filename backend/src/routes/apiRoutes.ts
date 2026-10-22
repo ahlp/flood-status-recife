@@ -16,7 +16,6 @@ router.get("/location", (req, res) =>
 // --- Rotas do Feed RSS ---
 router.get("/rss", (req, res) => rssController.getRss(req, res));
 router.get("/rss/latest", (req, res) => rssController.getLatestRss(req, res));
-router.get("/rss/download", (req, res) => rssController.downloadRss(req, res));
 
 // --- Rotas de Autenticação ---
 router.post("/auth/login", (req, res) => authController.login(req, res));

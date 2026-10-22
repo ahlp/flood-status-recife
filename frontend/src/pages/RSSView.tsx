@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { fetchLatestRss, downloadRssXml } from "../services/api.js";
+import { fetchLatestRss } from "../services/api.js";
 import { RSSFeedItem } from "../types/index.js";
-import { Rss, Download, ExternalLink, ArrowLeft, Loader2 } from "lucide-react";
+import { Rss, ExternalLink, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const RSSView: React.FC = () => {
@@ -100,15 +100,6 @@ export const RSSView: React.FC = () => {
                 <span>Acessar página de decisão</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
-
-              <button
-                onClick={downloadRssXml}
-                aria-label="Download RSS XML"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-xl shadow transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-slate-950"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download RSS (.xml)</span>
-              </button>
             </div>
           </article>
         ) : (

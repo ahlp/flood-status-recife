@@ -31,23 +31,6 @@ export class RSSController {
       res.json(fallbackItem);
     }
   }
-
-  public async downloadRss(req: Request, res: Response): Promise<void> {
-    try {
-      const xml = await rssService.getRssXml();
-      const fileName = rssService.getDownloadFileName();
-      res.set("Content-Disposition", `attachment; filename="${fileName}"`);
-      res.set("Content-Type", "application/xml; charset=utf-8");
-      res.send(xml);
-    } catch (error) {
-      logger.error(`Erro ao baixar feed RSS: ${(error as Error).message}`);
-      const fallbackDecision = riskEngineService.getStaticFallbackResult();
-      const fallbackXml = rssService.buildRssXml(fallbackDecision);
-      res.set("Content-Disposition", `attachment; filename="rss-fallback.xml"`);
-      res.set("Content-Type", "application/xml; charset=utf-8");
-      res.send(fallbackXml);
-    }
-  }
 }
 
 export const rssController = new RSSController();

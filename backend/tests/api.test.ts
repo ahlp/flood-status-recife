@@ -45,12 +45,9 @@ describe("API Endpoints Test Suite", () => {
     expect(res.body.description.length).toBeGreaterThan(50);
   });
 
-  it("GET /api/rss/download deve fornecer cabeçalho de anexo correto", async () => {
+  it("GET /api/rss/download foi descontinuado e responde 404", async () => {
     const res = await request(app).get("/api/rss/download");
-    expect(res.status).toBe(200);
-    expect(res.headers["content-disposition"]).toMatch(
-      /attachment; filename="rss-\d{8}\.xml"/,
-    );
+    expect(res.status).toBe(404);
   });
 
   it("POST /api/auth/login deve rejeitar credenciais inválidas com 401", async () => {

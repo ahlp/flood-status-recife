@@ -2,6 +2,8 @@
 
 Deliver daily static RSS 2.0 XML feeds and a dedicated minimalist view for citizens and integration tools (Slack, Discord, feed readers).
 
+> **Nota de depreciação:** o download do feed como arquivo anexo `.xml` foi descontinuado. O feed deve ser consumido diretamente pela URL pública (`/api/rss`).
+
 ## Requirements
 
 ### Requirement: Exibir Último Item do Feed RSS
@@ -17,12 +19,13 @@ The system SHALL present the latest published daily RSS item on a dedicated page
 - **THEN** Um snippet da justificativa, contendo no mínimo 200 caracteres e máximo 400 caracteres, é mostrado abaixo do título
 - **THEN** A estrutura visual segue um estilo minimalista com fundo branco e ícone RSS visível no cabeçalho
 
-### Requirement: Download do Arquivo XML RSS
+### Requirement: Consumo Direto do Feed por URL
 
-The system SHALL allow users to download the complete XML feed file with proper attachment headers.
+The system SHALL expose the RSS feed only through the public reading endpoints (`/rss` and `/api/rss`), without an attachment download endpoint.
 
-#### Scenario: Botão Download RSS funcional
+#### Scenario: Feed consumido diretamente pela URL
 
-- **GIVEN** O usuário está na página /rss
-- **WHEN** O usuário clica no botão "Download RSS"
-- **THEN** Inicia download automático do arquivo XML (.xml) com nome rss-YYYYMMDD.xml
+- **GIVEN** O usuário ou integrador deseja obter o feed
+- **WHEN** Acessa a URL pública do feed
+- **THEN** O conteúdo XML é retornado para leitura direta
+- **THEN** O endpoint de download `/api/rss/download` não existe e responde 404

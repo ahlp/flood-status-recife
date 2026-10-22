@@ -124,10 +124,6 @@ export async function fetchLatestRss(): Promise<RSSFeedItem> {
   }
 }
 
-export function downloadRssXml(): void {
-  window.open(`${API_BASE_URL}/api/rss/download`, "_blank");
-}
-
 export async function loginAdmin(
   username: string,
   password: string,
