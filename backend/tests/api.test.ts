@@ -91,6 +91,27 @@ describe("API Endpoints Test Suite", () => {
     expect(Array.isArray(res.body.data)).toBe(true);
   });
 
+  it("GET /api/metrics/latency deve expor latência em milissegundos (contrato ms)", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({ username: "admin", password: "adminrecife" });
+
+    const res = await request(app)
+      .get("/api/metrics/latency")
+      .set("Authorization", `Bearer ${loginRes.body.token}`);
+
+    expect(res.status).toBe(200);
+    const point = res.body.data[0];
+    expect(point).toHaveProperty("openMeteo");
+    expect(point).toHaveProperty("marinha");
+    expect(point).toHaveProperty("cemaden");
+    expect(point).not.toHaveProperty("latency_sec");
+    // Valores em ms são tipicamente > 1 (não frações de segundo)
+    expect(point.openMeteo).toBeGreaterThan(1);
+    expect(point.marinha).toBeGreaterThan(1);
+    expect(point.cemaden).toBeGreaterThan(1);
+  });
+
   it("GET /metrics deve expor métricas no formato Prometheus", async () => {
     const res = await request(app).get("/metrics");
     expect(res.status).toBe(200);

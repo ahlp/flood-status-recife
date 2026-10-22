@@ -16,6 +16,18 @@ The system SHALL display time-series charts showing latency in milliseconds for 
 - **THEN** Os gráficos de latência mostram valores reais dos últimos 24h para Open-Meteo, Marinha e CEMADEN
 - **THEN** Cada gráfico exibe título, eixo X (tempo) e eixo Y (latência ms) com legendas claras
 
+### Requirement: Contrato de Dados de Latência em Milissegundos
+
+The latency API SHALL expose latency values in milliseconds, using the fields `openMeteo`, `marinha` and `cemaden` in each data point.
+
+#### Scenario: API retorna latência em milissegundos
+
+- **GIVEN** O usuário autenticado consulta `GET /api/metrics/latency`
+- **WHEN** A resposta é serializada
+- **THEN** Cada ponto contém os campos `openMeteo`, `marinha` e `cemaden`
+- **THEN** Os valores são expressos em milissegundos (não em segundos)
+- **THEN** O campo legado `latency_sec` não é utilizado
+
 ### Requirement: Mostrar Taxa de Sucesso vs Falha por Fonte
 
 The system SHALL present success vs. failure rates for each external open data integration.
