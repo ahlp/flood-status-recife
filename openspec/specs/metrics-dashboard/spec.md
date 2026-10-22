@@ -6,7 +6,7 @@ Provide an internal operational monitoring dashboard with latency metrics, relia
 
 ### Requirement: Exibir Métricas de Latência das Chamadas Externas
 
-The system SHALL display time-series charts showing latency in milliseconds for Open-Meteo, Marinha do Brasil and CEMADEN/APAC over the last 24 hours.
+The system SHALL display time-series charts showing latency in milliseconds for Open-Meteo, Marinha do Brasil and CEMADEN telemetry data (PCD stations) over the last 24 hours.
 
 #### Scenario: Exibir métricas de latência das chamadas externas
 
