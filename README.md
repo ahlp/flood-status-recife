@@ -269,7 +269,6 @@ REDIS_URL=redis://localhost:6379
 JWT_SECRET=super-secret-flood-status-jwt-key
 CORS_ORIGIN=http://localhost:3000
 CRON_SCHEDULE="30 5 * * *"
-IPINFO_TOKEN=
 ```
 
 ### Frontend (`frontend/.env`)

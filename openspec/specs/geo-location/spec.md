@@ -4,6 +4,17 @@ Enable optional IP-based geolocation with user consent to highlight nearest crit
 
 ## Requirements
 
+### Requirement: Processamento Local da Localização Aproximada
+
+The system SHALL process the approximate IP location locally, without sending citizen IP addresses to third-party paid geolocation providers.
+
+#### Scenario: Nenhum IP de cidadão é enviado a serviços externos
+
+- **GIVEN** O usuário concedeu consentimento para exibir vias críticas próximas
+- **WHEN** A aplicação resolve a localização aproximada
+- **THEN** Nenhuma requisição contendo o IP do cidadão é enviada a provedores externos de geolocalização
+- **THEN** Rastreadores de IP de terceiros (por exemplo, ipinfo.io) e seus tokens de API não são utilizados
+
 ### Requirement: Exibir Modal de Consentimento para Vias Críticas Próximas
 
 The system SHALL present an accessible consent prompt asking if the user wishes to view nearby critical flood routes based on approximate IP location.
