@@ -97,6 +97,34 @@ describe("API Endpoints Test Suite", () => {
     expect(res.text).toContain("feh_http_requests_total");
   });
 
+  it("GET /api/logs deve aceitar filtro de data ISO YYYY-MM-DD", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({ username: "admin", password: "adminrecife" });
+
+    const res = await request(app)
+      .get("/api/logs")
+      .query({ date: "2026-09-15", level: "ERROR" })
+      .set("Authorization", `Bearer ${loginRes.body.token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.logs)).toBe(true);
+  });
+
+  it("GET /api/logs rejeita formato de data não reconhecido com 400", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({ username: "admin", password: "adminrecife" });
+
+    const res = await request(app)
+      .get("/api/logs")
+      .query({ date: "setembro-2026" })
+      .set("Authorization", `Bearer ${loginRes.body.token}`);
+
+    expect(res.status).toBe(400);
+  });
+
   it("POST /api/webhook/notify deve aceitar notificações externas", async () => {
     const res = await request(app)
       .post("/api/webhook/notify")

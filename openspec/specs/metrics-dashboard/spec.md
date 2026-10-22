@@ -41,7 +41,7 @@ The system SHALL chart the total daily requests served by the /decision endpoint
 
 ### Requirement: Filtrar Logs Estruturados por Data e Nível
 
-The system SHALL provide a structured log viewer allowing filtering by date and severity level (INFO, WARN, ERROR).
+The system SHALL provide a structured log viewer allowing filtering by date and severity level (INFO, WARN, ERROR). The `date` filter SHALL use the ISO format `YYYY-MM-DD`.
 
 #### Scenario: Filtrar logs estruturados por data/hora e nível
 
@@ -49,6 +49,13 @@ The system SHALL provide a structured log viewer allowing filtering by date and 
 - **WHEN** Um usuário define filtro "data = 2026-09-15" e "nível = ERROR"
 - **THEN** A tabela exibe apenas registros correspondentes ao dia e nível selecionado
 - **THEN** Cada linha mostra timestamp, nível, mensagem e campo service
+
+#### Scenario: Formato de data inválido é rejeitado
+
+- **GIVEN** O endpoint de logs exige o padrão ISO `YYYY-MM-DD`
+- **WHEN** O cliente envia `date=15/09/2026` (legado) ou outro formato não reconhecido
+- **THEN** O formato legado DD/MM/YYYY é convertido para ISO e aceito
+- **THEN** Formatos não reconhecidos retornam 400 Bad Request
 
 ### Requirement: Autenticação JWT para Acesso ao Dashboard
 
