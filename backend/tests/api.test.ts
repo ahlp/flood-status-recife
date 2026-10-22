@@ -73,6 +73,16 @@ describe("API Endpoints Test Suite", () => {
   it("GET /api/metrics/latency deve exigir token e retornar 401 sem Authorization", async () => {
     const res = await request(app).get("/api/metrics/latency");
     expect(res.status).toBe(401);
+    expect(res.status).not.toBe(403);
+    expect(res.body.error).toBe("Unauthorized");
+  });
+
+  it("GET /api/logs deve retornar 401 (não 403) com token inválido", async () => {
+    const res = await request(app)
+      .get("/api/logs")
+      .set("Authorization", "Bearer token-invalido");
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe("Unauthorized");
   });
 
   it("GET /api/metrics/latency deve retornar dados quando autenticado", async () => {
