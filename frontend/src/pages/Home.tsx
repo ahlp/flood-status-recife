@@ -29,10 +29,10 @@ export const Home: React.FC = () => {
       // Atualiza classe do body para o tema reativo correspondente (RF-06 / US-03)
       if (data.value === "SIM") {
         document.body.className =
-          "theme-alert bg-brand-alert min-h-screen font-sans text-white transition-colors duration-300";
+          "theme-alert bg-decision-sim min-h-screen font-sans text-white transition-colors duration-300";
       } else {
         document.body.className =
-          "theme-neutral bg-brand-blue min-h-screen font-sans text-white transition-colors duration-300";
+          "theme-neutral bg-decision-nao min-h-screen font-sans text-white transition-colors duration-300";
       }
     } catch {
       setError(true);

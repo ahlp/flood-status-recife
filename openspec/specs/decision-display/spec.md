@@ -2,6 +2,8 @@
 
 Provide instant daily decision display (SIM or NÃO) regarding urban flooding and mobility risk in Recife and the metropolitan region, applying reactive visual themes.
 
+Visual identity tokens are canonical and must not diverge between specification and code: `decision-sim` = #ff4d00 (SIM), `decision-nao` = #3498db (NÃO). The legacy `#c0392b` red is reserved for accent/error usage and must not be used as the SIM base color.
+
 ## Requirements
 
 ### Requirement: Exibir Decisão do Dia Centralizada
@@ -13,7 +15,7 @@ The system SHALL display the daily decision ("SIM" or "NÃO") calculated by the 
 - **GIVEN** Usuário acessa a página sem parâmetros de consulta
 - **WHEN** A API interna retorna decisão "SIM" e justificativa curta
 - **THEN** Página exibe texto "SIM" em fonte 48px centralizado
-- **THEN** Tema da página tem cor base #ff4d00 (alerta) ou #c0392b (vermelho)
+- **THEN** Tema da página tem cor base #ff4d00 (alerta) — identidade canônica única da decisão SIM
 - **THEN** Transição CSS de 0.3s ocorre ao carregar a página
 
 #### Scenario: Decisão NÃO exibida corretamente com tema azul neutro

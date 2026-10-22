@@ -11,6 +11,8 @@ export default {
         "brand-alert": "#ff4d00",
         "brand-neutral-bg": "#f8fafc",
         "brand-gray-light": "#f5f5f5",
+        "decision-sim": "#ff4d00",
+        "decision-nao": "#3498db",
       },
       fontFamily: {
         sans: [
