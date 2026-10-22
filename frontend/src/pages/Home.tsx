@@ -9,6 +9,7 @@ import {
   checkGeoConsent,
 } from "../components/GeoConsentModal.js";
 import { ErrorFallback } from "../components/ErrorFallback.js";
+import { PushNotificationManager } from "../components/PushNotificationManager.js";
 import { ShieldAlert, BarChart3, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -142,6 +143,7 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          <PushNotificationManager />
           <PrintButton />
         </div>
       </footer>

@@ -128,6 +128,20 @@ export function downloadRssXml(): void {
   window.open(`${API_BASE_URL}/api/rss/download`, "_blank");
 }
 
+// --- Push Notifications (Web Push Protocol) ---
+export async function registerPushSubscription(payload: {
+  endpoint: string;
+  keys?: { p256dh?: string; auth?: string };
+}): Promise<void> {
+  await api.post("/api/push/register", payload);
+}
+
+export async function unregisterPushSubscription(
+  endpoint: string,
+): Promise<void> {
+  await api.delete("/api/push/register", { data: { endpoint } });
+}
+
 export async function loginAdmin(
   username: string,
   password: string,

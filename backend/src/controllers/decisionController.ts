@@ -5,6 +5,7 @@ import { dataFetcherService } from "../services/dataFetcher.js";
 import { logger } from "../utils/logger.js";
 import { recordDecisionRequest } from "../utils/metrics.js";
 import { DecisionResult } from "../types/index.js";
+import { pushService } from "../services/pushService.js";
 
 export class DecisionController {
   /**
@@ -36,6 +37,14 @@ export class DecisionController {
 
       // 3. Salva no cache com TTL de 24h (86400s)
       await cacheService.set(cacheKey, result, 86400);
+
+      // 4. Dispara notificação push quando a decisão é crítica (SIM)
+      if (result.value === "SIM") {
+        void pushService.dispatchCriticalAlert(
+          "Alerta de alagamento",
+          result.justification,
+        );
+      }
 
       res.json(result);
     } catch (error) {
@@ -92,6 +101,14 @@ export class DecisionController {
     logger.info(
       `📡 Webhook de notificação recebido: ${JSON.stringify(payload)}`,
     );
+
+    // Dispara push para alertas críticos recebidos via webhook
+    if (payload?.decision === "SIM") {
+      void pushService.dispatchCriticalAlert(
+        "Alerta de alagamento",
+        payload.message || "Decisão crítica de alagamento registrada.",
+      );
+    }
 
     res.json({
       success: true,
