@@ -30,10 +30,23 @@ The system SHALL display a concise justification (at most 90 characters) below t
 
 #### Scenario: Justificativa curta exibida abaixo da decisão
 
-- **GIVEN** A API retorna justificativa "Pico de maré de 2.2m às 07h30 alinhado a 35mm de chuva"
+- **GIVEN** A API retorna justificativa "Pico de maré de 2.2m às 07h30 (Open-Meteo Marine, offset +1.35m) alinhado a 35mm de chuva"
 - **WHEN** Página renderiza decisão
 - **THEN** Texto abaixo do título tem tamanho 18px e não excede 90 caracteres
 - **THEN** Centralizado horizontalmente
+
+### Requirement: Fonte de Dados de Maré (Open-Meteo Marine)
+
+The system SHALL fetch tide and marine water level data from the Open-Meteo Marine API (marine-api.open-meteo.com) with a Zero Hydrográfico offset of +1.35m, applied to raw tide predictions.
+
+This replaces the legacy reference to "Tábua de Marés da Marinha do Brasil".
+
+#### Scenario: Maré obtida da Open-Meteo Marine com offset do Zero Hidrográfico
+
+- **GIVEN** O serviço de coleta de maré é executado
+- **WHEN** Os níveis são solicitados à Open-Meteo Marine
+- **THEN** A fonte utilizada é `marine-api.open-meteo.com`
+- **THEN** O offset de +1.35m do Zero Hidrográfico é aplicado aos valores de MSL
 
 ### Requirement: Navegação para Feed RSS
 
