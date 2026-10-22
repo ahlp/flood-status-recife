@@ -1,26 +1,26 @@
-case_number,case_name,type,branch
-01,Transição para Open-Meteo Marine na Tábua de Marés,A,case-01-transicao-om-marine
-02,Telemetria de Linígrafos do CEMADEN para Nível Fluvial,A,case-02-cemaden-telemetry
-03,Algoritmo de Truncamento de Justificativa com Reticências,A,case-03-reticencias
-04,Redução do Ponto de Corte de Risco para 60%,B,case-04-corte-risco-60
-05,Extensão da Validade do Consentimento de IP para 90 Dias,B,case-05-extender-consent-90dias
-06,Adição de Botão Copiar Link Seguro na Página RSS,B,case-06-copy-link-rss
-07,Padronização ISO no Nome do Arquivo PNG,B,case-07-png-nome-iso
-08,Suporte ao Estado Intermediário de Risco ATENÇÃO,B,case-08-estado-atencao
-09,Notificações Web Push para Alertas Críticos,C,case-09-web-push
-10,Histórico e Calendário de Decisões Passadas,C,case-10-historico-calendario
-11,Suporte a Progressive Web App PWA Offline,C,case-11-pwa-offline
-12,Seleção de Cidades da Região Metropolitana Olinda e Jaboatão,C,case-12-multi-city-rmr
-13,Redução Indevida da Escala de Exportação do Canvas PNG,D,case-13-png-escala
-14,Remoção do Bloqueio de Rolagem do Fundo no Modal de Consentimento,D,case-14-modal-scroll-lock
-15,Omissão do Atributo de Segurança rel=noopener noreferrer no Link RSS,D,case-15-rss-rel-seguro
-16,Resposta de Erro 500 sem Fallback em Falhas de Conexão,D,case-16-fallback-500
-17,Código Residual com Suporte a Tokens de Provedores de IP Terceiros,E,case-17-remover-ipinfo
-18,Descontinuação do Endpoint de Download de Arquivo XML,E,case-18-deprecar-download-xml
-19,Status Code 403 retornado em vez de 401 Unauthorized,F,case-19-auth-401
-20,Latência retornada em Segundos em vez de Milissegundos,F,case-20-latencia-ms
-21,Diminuição do Tamanho Mínimo do Snippet RSS para 150 Caracteres,F,case-21-snippet-200
-22,Incompatibilidade no Formato de Data do Filtro de Logs,F,case-22-filtro-data-iso
-23,Redefinição Concorrente da Janela e Limiar de Maré Crítica,G,case-23-mare-janela-limiar
-24,Conflito Bidirecional na Identidade Visual da Decisão SIM,G,case-24-identidade-sim
-25,Política Conflitante de SLA e Tolerância a Falhas no CEMADEN,G,case-25-sla-cemaden
+case_number,case_name,type,branch,mr_url
+01,Transição para Open-Meteo Marine na Tábua de Marés,A,case-01-transicao-om-marine,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/2
+02,Telemetria de Linígrafos do CEMADEN para Nível Fluvial,A,case-02-cemaden-telemetry,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/3
+03,Algoritmo de Truncamento de Justificativa com Reticências,A,case-03-reticencias,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/4
+04,Redução do Ponto de Corte de Risco para 60%,B,case-04-corte-risco-60,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/5
+05,Extensão da Validade do Consentimento de IP para 90 Dias,B,case-05-extender-consent-90dias,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/6
+06,Adição de Botão Copiar Link Seguro na Página RSS,B,case-06-copy-link-rss,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/7
+07,Padronização ISO no Nome do Arquivo PNG,B,case-07-png-nome-iso,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/8
+08,Suporte ao Estado Intermediário de Risco ATENÇÃO,B,case-08-estado-atencao,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/9
+09,Notificações Web Push para Alertas Críticos,C,case-09-web-push,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/10
+10,Histórico e Calendário de Decisões Passadas,C,case-10-historico-calendario,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/11
+11,Suporte a Progressive Web App PWA Offline,C,case-11-pwa-offline,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/12
+12,Seleção de Cidades da Região Metropolitana Olinda e Jaboatão,C,case-12-multi-city-rmr,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/13
+13,Redução Indevida da Escala de Exportação do Canvas PNG,D,case-13-png-escala,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/14
+14,Remoção do Bloqueio de Rolagem do Fundo no Modal de Consentimento,D,case-14-modal-scroll-lock,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/15
+15,Omissão do Atributo de Segurança rel=noopener noreferrer no Link RSS,D,case-15-rss-rel-seguro,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/16
+16,Resposta de Erro 500 sem Fallback em Falhas de Conexão,D,case-16-fallback-500,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/17
+17,Código Residual com Suporte a Tokens de Provedores de IP Terceiros,E,case-17-remover-ipinfo,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/18
+18,Descontinuação do Endpoint de Download de Arquivo XML,E,case-18-deprecar-download-xml,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/19
+19,Status Code 403 retornado em vez de 401 Unauthorized,F,case-19-auth-401,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/20
+20,Latência retornada em Segundos em vez de Milissegundos,F,case-20-latencia-ms,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/21
+21,Diminuição do Tamanho Mínimo do Snippet RSS para 150 Caracteres,F,case-21-snippet-200,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/22
+22,Incompatibilidade no Formato de Data do Filtro de Logs,F,case-22-filtro-data-iso,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/23
+23,Redefinição Concorrente da Janela e Limiar de Maré Crítica,G,case-23-mare-janela-limiar,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/24
+24,Conflito Bidirecional na Identidade Visual da Decisão SIM,G,case-24-identidade-sim,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/25
+25,Política Conflitante de SLA e Tolerância a Falhas no CEMADEN,G,case-25-sla-cemaden,https://gitlab.com/ahlp/flood-status-recife/-/merge_requests/26
