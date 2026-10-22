@@ -12,6 +12,11 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const criticalRoadsData: CriticalRoad[] = require("../data/criticalRoads.json");
 
+export const TIDE_PEAK_WINDOW = { startHour: 4, endHour: 11 } as const;
+export const TIDE_CRITICAL_WINDOW = { startHour: 6, endHour: 10 } as const;
+export const TIDE_CRITICAL_HEIGHT_METERS = 1.9;
+export const TIDE_ZH_OFFSET_METERS = 1.35;
+
 export class DataFetcherService {
   private static readonly RECIFE_LAT = -8.0578;
   private static readonly RECIFE_LNG = -34.8829;
@@ -114,7 +119,7 @@ export class DataFetcherService {
       const todayDateStr = now.toISOString().slice(0, 10);
 
       // Deslocamento médio do Zero Hidrográfico (ZH) em relação ao Mean Sea Level (MSL) no Porto do Recife: ~1.35m
-      const ZH_OFFSET = 1.35;
+      const ZH_OFFSET = TIDE_ZH_OFFSET_METERS;
 
       let morningPeakHeight = 0;
       let morningPeakHour = 7;
@@ -127,8 +132,11 @@ export class DataFetcherService {
           const msl = levelsMsl[idx] ?? 0;
           const zhHeight = Number((ZH_OFFSET + msl).toFixed(2));
 
-          // Monitorar janela matinal estendida (04h às 11h) para capturar o pico
-          if (hour >= 4 && hour <= 11) {
+          // Monitorar janela matinal estendida para capturar o pico
+          if (
+            hour >= TIDE_PEAK_WINDOW.startHour &&
+            hour <= TIDE_PEAK_WINDOW.endHour
+          ) {
             if (zhHeight > morningPeakHeight) {
               morningPeakHeight = zhHeight;
               morningPeakHour = hour;
@@ -136,8 +144,12 @@ export class DataFetcherService {
             }
           }
 
-          // Se durante o horário de pico matinal (06h às 10h) a maré estiver crítica (>= 1.9m)
-          if (hour >= 6 && hour <= 10 && zhHeight >= 1.9) {
+          // Se durante o horário de pico matinal a maré estiver crítica
+          if (
+            hour >= TIDE_CRITICAL_WINDOW.startHour &&
+            hour <= TIDE_CRITICAL_WINDOW.endHour &&
+            zhHeight >= TIDE_CRITICAL_HEIGHT_METERS
+          ) {
             hasHighTideDuringMorning = true;
           }
         }
@@ -149,9 +161,9 @@ export class DataFetcherService {
 
       const isHighTideMorning =
         hasHighTideDuringMorning ||
-        (morningPeakHour >= 6 &&
-          morningPeakHour <= 10 &&
-          morningPeakHeight >= 1.9);
+        (morningPeakHour >= TIDE_CRITICAL_WINDOW.startHour &&
+          morningPeakHour <= TIDE_CRITICAL_WINDOW.endHour &&
+          morningPeakHeight >= TIDE_CRITICAL_HEIGHT_METERS);
 
       return {
         peakTime: morningPeakTime,

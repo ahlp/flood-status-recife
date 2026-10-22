@@ -24,6 +24,18 @@ The system SHALL display the daily decision ("SIM" or "NÃO") calculated by the 
 - **THEN** Tema da página tem cor base #3498db (azul neutro)
 - **THEN** Transição CSS de 0.3s ocorre ao carregar a página
 
+### Requirement: Definição Canônica da Janela e Limiar de Maré Crítica
+
+The tide evaluation SHALL follow a single canonical baseline shared by specification and implementation: peak search window from 04:00 to 11:00, critical window from 06:00 to 10:00, critical height at or above 1.90m (Zero Hidrográfico reference), and a +1.35m ZH offset applied to the Open-Meteo Marine Mean Sea Level values.
+
+#### Scenario: Maré é considerada crítica somente na janela canônica
+
+- **GIVEN** Os dados horários de maré do dia estão disponíveis
+- **WHEN** O pico de maré é calculado entre 04:00 e 11:00
+- **THEN** A maré só é marcada como crítica se o pico entre 06:00 e 10:00 for maior ou igual a 1.90m
+- **THEN** A altura informada usa o referencial do Zero Hidrográfico com offset de +1.35m
+- **THEN** Nenhuma regra concorrente de janela ou limiar é aplicada
+
 ### Requirement: Exibir Justificativa Curta Contextual
 
 The system SHALL display a concise justification (at most 90 characters) below the decision explaining the critical risk factors.
