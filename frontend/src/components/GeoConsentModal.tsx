@@ -7,7 +7,7 @@ interface GeoConsentModalProps {
 }
 
 const STORAGE_KEY = "feh_geo_consent";
-const EXPIRY_DAYS = 30;
+const EXPIRY_DAYS = 90;
 
 export function checkGeoConsent(): { asked: boolean; consent: boolean } {
   try {
