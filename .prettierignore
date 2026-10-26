@@ -9,3 +9,9 @@ coverage/
 # Local workspace artifacts (not present in CI checkout)
 .worktrees/
 NEXT_STEPS.md
+
+# Prettier's YAML formatting breaks the cache:key.files block; keep valid GitLab YAML
+.gitlab-ci.yml
+
+# Generated validation artifacts
+specdrift-report.json

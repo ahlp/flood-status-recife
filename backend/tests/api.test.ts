@@ -1,8 +1,18 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import request from "supertest";
 import { app } from "../src/server.js";
 
+const MOCK_RSS_URL = "https://mock.example.com/rss";
+
 describe("API Endpoints Test Suite", () => {
+  beforeAll(() => {
+    process.env.RSS_FEED_URL = MOCK_RSS_URL;
+  });
+
+  afterAll(() => {
+    delete process.env.RSS_FEED_URL;
+  });
+
   it("GET /health deve retornar status UP", async () => {
     const res = await request(app).get("/health");
     expect(res.status).toBe(200);
@@ -41,7 +51,7 @@ describe("API Endpoints Test Suite", () => {
     const res = await request(app).get("/api/rss/latest");
     expect(res.status).toBe(200);
     expect(res.body.title).toContain("Decisão do dia: Ficar em casa?");
-    expect(res.body.link).toBe("https://ficoemcasa.com.br/");
+    expect(res.body.link).toBe(MOCK_RSS_URL);
     expect(res.body.description.length).toBeGreaterThan(50);
   });
 

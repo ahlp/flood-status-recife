@@ -115,7 +115,7 @@ export async function fetchLatestRss(): Promise<RSSFeedItem> {
   } catch {
     return {
       title: "Decisão do dia: Ficar em casa? SIM",
-      link: "https://ficoemcasa.com.br/",
+      link: "https://example.com/decisao",
       pubDate: new Date().toUTCString(),
       description:
         "Utilizando dados estáticos de contingência. Não foi possível conectar ao servidor RSS.",

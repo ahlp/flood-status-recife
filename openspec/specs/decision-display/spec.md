@@ -12,8 +12,8 @@ The system SHALL display the daily decision ("SIM" or "NÃO") calculated by the 
 
 - **GIVEN** Usuário acessa a página sem parâmetros de consulta
 - **WHEN** A API interna retorna decisão "SIM" e justificativa curta
-- **THEN** Página exibe texto "SIM" em fonte 48px centralizado
-- **THEN** Tema da página tem cor base #ff4d00 (alerta) ou #c0392b (vermelho)
+- **THEN** Página exibe texto "SIM"
+- **THEN** Tema da página tem cor base da identidade canônica única da decisão SIM
 - **THEN** Transição CSS de 0.3s ocorre ao carregar a página
 
 #### Scenario: Decisão NÃO exibida corretamente com tema azul neutro

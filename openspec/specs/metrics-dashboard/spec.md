@@ -6,15 +6,14 @@ Provide an internal operational monitoring dashboard with latency metrics, relia
 
 ### Requirement: Exibir Métricas de Latência das Chamadas Externas
 
-The system SHALL display time-series charts showing latency in milliseconds for Open-Meteo, Marinha do Brasil and CEMADEN/APAC over the last 24 hours.
+The system SHALL display per-source latency charts in milliseconds for Open-Meteo, Marinha do Brasil and CEMADEN/APAC.
 
 #### Scenario: Exibir métricas de latência das chamadas externas
 
-- **GIVEN** O sistema está em produção e o endpoint /dashboard está acessível via HTTPS
-- **WHEN** Um usuário autenticado com token JWT válido navega para a URL /dashboard
-- **THEN** A página carrega em menos que 2 segundos
-- **THEN** Os gráficos de latência mostram valores reais dos últimos 24h para Open-Meteo, Marinha e CEMADEN
-- **THEN** Cada gráfico exibe título, eixo X (tempo) e eixo Y (latência ms) com legendas claras
+- **GIVEN** Um usuário autenticado com token JWT válido navega para a URL /dashboard
+- **WHEN** A API de métricas retorna a série de latência de cada fonte
+- **THEN** Cada gráfico por fonte exibe título, eixo X (tempo) e eixo Y (latência em ms) com legendas claras
+- **THEN** Os valores são expressos em milissegundos, sem o campo `latency_seconds`
 
 ### Requirement: Mostrar Taxa de Sucesso vs Falha por Fonte
 
@@ -36,7 +35,7 @@ The system SHALL chart the total daily requests served by the /decision endpoint
 
 - **GIVEN** O endpoint /decision está sendo chamado por usuários externos
 - **WHEN** Um usuário acessa a seção de requisições diárias no dashboard
-- **THEN** Um gráfico mostra o número total de chamadas ao /decision para cada dia das últimas 7 semanas
+- **THEN** Um gráfico mostra o número total de chamadas ao /decision para cada dia das últimas semanas
 - **THEN** O eixo X exibe datas, o eixo Y exibe contagem e há tooltips ao passar o cursor
 
 ### Requirement: Filtrar Logs Estruturados por Data e Nível

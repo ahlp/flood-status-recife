@@ -2,6 +2,7 @@ import { create } from "xmlbuilder2";
 import { DecisionResult, RSSFeedItem } from "../types/index.js";
 import { cacheService } from "./cacheService.js";
 import { logger } from "../utils/logger.js";
+import { getRssFeedUrl } from "../config/rss.js";
 
 export class RSSService {
   private static readonly RSS_CACHE_KEY = "feh:rss:latest";
@@ -16,7 +17,7 @@ export class RSSService {
       .toISOString()
       .slice(0, 10);
     const title = `Decisão do dia: Ficar em casa? ${decision.value}`;
-    const link = "https://ficoemcasa.com.br/";
+    const link = getRssFeedUrl();
     const guid = `feh-decision-${todayDateStr}`;
     const description = decision.extendedDescription;
 
@@ -82,7 +83,7 @@ export class RSSService {
 
     const jsonItem: RSSFeedItem = {
       title: `Decisão do dia: Ficar em casa? ${decision.value}`,
-      link: "https://ficoemcasa.com.br/",
+      link: getRssFeedUrl(),
       pubDate: new Date(decision.calculatedAt).toUTCString(),
       description: decision.extendedDescription,
       guid: `feh-decision-${todayDateStr}`,
@@ -108,7 +109,8 @@ export class RSSService {
 
     // Default básico
     const today = new Date().toISOString().slice(0, 10);
-    return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Fico em Casa Hoje?</title><link>https://ficoemcasa.com.br/</link><description>Feed diário</description><item><title>Decisão do dia: Ficar em casa? NÃO</title><link>https://ficoemcasa.com.br/</link><guid>feh-${today}</guid><description>Maré baixa e chuva fraca. Vias transitáveis.</description></item></channel></rss>`;
+    const link = getRssFeedUrl();
+    return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Fico em Casa Hoje?</title><link>${link}</link><description>Feed diário</description><item><title>Decisão do dia: Ficar em casa? NÃO</title><link>${link}</link><guid>feh-${today}</guid><description>Maré baixa e chuva fraca. Vias transitáveis.</description></item></channel></rss>`;
   }
 
   /**
@@ -133,7 +135,7 @@ export class RSSService {
     const today = new Date().toISOString().slice(0, 10);
     return {
       title: "Decisão do dia: Ficar em casa? NÃO",
-      link: "https://ficoemcasa.com.br/",
+      link: getRssFeedUrl(),
       pubDate: new Date().toUTCString(),
       description:
         "Maré baixa e chuva fraca prevista no início da manhã. Trânsito seguro sem pontos críticos de retenção na Região Metropolitana do Recife.",

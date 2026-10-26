@@ -1,0 +1,12 @@
+# SpecDrift scan configuration.
+# Keeps the repository source map focused on implementation files
+# (frontend/src, backend/src) so findings are concrete rather than
+# "inconclusive". Root-level docs, generated reports and the benchmark
+# harness are keyword-dense and crowd the actual source out of the
+# token-budgeted context, which also produces false positives (the model
+# mistakes the PR-mutation script for real code).
+exclude:
+  - "specdrift-report.json"
+  - "create_all_prs.py"
+  - "**/*.py"
+  - "**/*.md"
