@@ -10,3 +10,4 @@ exclude:
   - "create_all_prs.py"
   - "**/*.py"
   - "**/*.md"
+  - "DECK_BRIEFING.md"

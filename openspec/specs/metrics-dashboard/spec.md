@@ -29,7 +29,7 @@ The system SHALL present success vs. failure rates for each external open data i
 
 ### Requirement: Exibir Contagem Diária de Requisições de Decisão
 
-The system SHALL chart the total daily requests served by the /decision endpoint across the past 7 weeks.
+The system SHALL chart the total daily requests served by the /decision endpoint across the past weeks.
 
 #### Scenario: Exibir contagem diária de requisições API /decision
 

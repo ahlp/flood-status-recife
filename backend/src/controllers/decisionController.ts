@@ -42,9 +42,13 @@ export class DecisionController {
       logger.error(
         `❌ Falha ao processar decisão: ${(error as Error).message}`,
       );
-      // Fallback estático seguro (RF-04 / US-07)
-      const fallback = riskEngineService.getStaticFallbackResult();
-      res.json(fallback);
+      // Falha irrecuperável: não mascarar com 200; o frontend deve exibir
+      // a página de contingência estática (ErrorFallback).
+      res.status(503).json({
+        error: "Service Unavailable",
+        message:
+          "Não foi possível obter dados hoje. Por favor, tente novamente amanhã.",
+      });
     }
   }
 

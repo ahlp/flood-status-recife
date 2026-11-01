@@ -398,7 +398,7 @@ export const Dashboard: React.FC = () => {
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-indigo-400" />
                 <span>
-                  Volume Diário de Consultas /decision (Últimas 7 Semanas)
+                  Volume Diário de Consultas /decision (Últimas Semanas)
                 </span>
               </h2>
               <p className="text-xs text-slate-400">

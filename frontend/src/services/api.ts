@@ -56,6 +56,13 @@ export const STATIC_FALLBACK_DECISION: DecisionResult = {
   isFallback: true,
 };
 
+export class UnrecoverableDataError extends Error {
+  constructor(message = "Fontes de dados indisponíveis") {
+    super(message);
+    this.name = "UnrecoverableDataError";
+  }
+}
+
 export async function fetchDecision(): Promise<DecisionResult> {
   let attempts = 0;
   const maxAttempts = 3;
@@ -71,16 +78,18 @@ export async function fetchDecision(): Promise<DecisionResult> {
       );
       if (attempts >= maxAttempts) {
         console.warn(
-          "[FEH] Ativando fallback estático após 3 falhas consecutivas.",
+          "[FEH] Falha irrecuperável após 3 tentativas consecutivas.",
           error,
         );
-        return STATIC_FALLBACK_DECISION;
+        throw new UnrecoverableDataError(
+          error instanceof Error ? error.message : undefined,
+        );
       }
       await new Promise((res) => setTimeout(res, attempts * 500));
     }
   }
 
-  return STATIC_FALLBACK_DECISION;
+  throw new UnrecoverableDataError();
 }
 
 export async function fetchLocationInfo(): Promise<{
