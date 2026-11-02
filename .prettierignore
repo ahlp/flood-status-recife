@@ -9,6 +9,7 @@ coverage/
 # Local workspace artifacts (not present in CI checkout)
 .worktrees/
 NEXT_STEPS.md
+DECK_BRIEFING.md
 
 # Prettier's YAML formatting breaks the cache:key.files block; keep valid GitLab YAML
 .gitlab-ci.yml
